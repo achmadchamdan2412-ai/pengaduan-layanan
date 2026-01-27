@@ -1,3 +1,4 @@
+
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
 -- Server version:               PostgreSQL 17.7 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
@@ -20,31 +21,13 @@ CREATE TABLE IF NOT EXISTS "asuransi" (
 	PRIMARY KEY ("id")
 );
 
--- Dumping data for table public.asuransi: 2 rows
+-- Dumping data for table public.asuransi: -1 rows
 DELETE FROM "asuransi";
 /*!40000 ALTER TABLE "asuransi" DISABLE KEYS */;
 INSERT INTO "asuransi" ("id", "nama_asuransi") VALUES
 	(1, 'BPJS'),
 	(2, 'UMUM');
 /*!40000 ALTER TABLE "asuransi" ENABLE KEYS */;
-
--- Dumping structure for table public.formulir
-CREATE TABLE IF NOT EXISTS "formulir" (
-	"id" INTEGER NOT NULL,
-	"alamat" VARCHAR NULL DEFAULT NULL,
-	"no_hp" BIGINT NULL DEFAULT NULL,
-	"masukan" VARCHAR NULL DEFAULT NULL,
-	"created_at" TIMESTAMP NULL DEFAULT NULL,
-	"tanggal" DATE NULL DEFAULT NULL,
-	"profil_id" INTEGER NULL DEFAULT NULL,
-	PRIMARY KEY ("id"),
-	CONSTRAINT "FK_formulir_profil" FOREIGN KEY ("profil_id") REFERENCES "profil" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-
--- Dumping data for table public.formulir: 0 rows
-DELETE FROM "formulir";
-/*!40000 ALTER TABLE "formulir" DISABLE KEYS */;
-/*!40000 ALTER TABLE "formulir" ENABLE KEYS */;
 
 -- Dumping structure for table public.layanan
 CREATE TABLE IF NOT EXISTS "layanan" (
@@ -53,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "layanan" (
 	PRIMARY KEY ("id")
 );
 
--- Dumping data for table public.layanan: 10 rows
+-- Dumping data for table public.layanan: -1 rows
 DELETE FROM "layanan";
 /*!40000 ALTER TABLE "layanan" DISABLE KEYS */;
 INSERT INTO "layanan" ("id", "nama_layanan") VALUES
@@ -102,31 +85,45 @@ DELETE FROM "profil";
 /*!40000 ALTER TABLE "profil" DISABLE KEYS */;
 /*!40000 ALTER TABLE "profil" ENABLE KEYS */;
 
+-- Dumping structure for table public.formulir
+CREATE TABLE IF NOT EXISTS "formulir" (
+	"id" INTEGER NOT NULL,
+	"alamat" VARCHAR NULL DEFAULT NULL,
+	"no_hp" BIGINT NULL DEFAULT NULL,
+	"masukan" VARCHAR NULL DEFAULT NULL,
+	"created_at" TIMESTAMP NULL DEFAULT NULL,
+	"tanggal" DATE NULL DEFAULT NULL,
+	"profil_id" INTEGER NULL DEFAULT NULL,
+	PRIMARY KEY ("id"),
+	CONSTRAINT "FK_formulir_profil" FOREIGN KEY ("profil_id") REFERENCES "profil" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+-- Dumping data for table public.formulir: -1 rows
+DELETE FROM "formulir";
+/*!40000 ALTER TABLE "formulir" DISABLE KEYS */;
+/*!40000 ALTER TABLE "formulir" ENABLE KEYS */;
+
 -- Dumping structure for table public.responden
 CREATE TABLE IF NOT EXISTS "responden" (
 	"id" INTEGER NOT NULL,
 	"pertanyaan" TEXT NULL DEFAULT NULL,
-	"nilai_id" INTEGER NULL DEFAULT NULL,
-	"profil_id" INTEGER NULL DEFAULT NULL,
-	PRIMARY KEY ("id"),
-	CONSTRAINT "FK_responden_nilai" FOREIGN KEY ("nilai_id") REFERENCES "nilai" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
-	CONSTRAINT "FK_responden_profil" FOREIGN KEY ("profil_id") REFERENCES "profil" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+	PRIMARY KEY ("id")
 );
 
--- Dumping data for table public.responden: 9 rows
+-- Dumping data for table public.responden: -1 rows
 DELETE FROM "responden";
 /*!40000 ALTER TABLE "responden" DISABLE KEYS */;
-INSERT INTO "responden" ("id", "pertanyaan", "nilai_id", "profil_id") VALUES
-	(2, 'Bagaimana pendapat saudara tentang Bagaimana pendapat saudara tentang kesesuaian persyaratan pelayanan dengan jenis pelayanannya?', NULL, NULL),
-	(3, 'Bagaimana pemahaman saudara tentang kemudahan pelayanan prosedur pelayanan di unit ini?', NULL, NULL),
-	(4, 'Bagaimana pendapat saudara tentang kecepatan waktu dalam memberikan pelayanan?', NULL, NULL),
+INSERT INTO "responden" ("id", "pertanyaan") VALUES
+	(2, 'Bagaimana pendapat saudara tentang Bagaimana pendapat saudara tentang kesesuaian persyaratan pelayanan dengan jenis pelayanannya?'),
+	(3, 'Bagaimana pemahaman saudara tentang kemudahan pelayanan prosedur pelayanan di unit ini?'),
+	(4, 'Bagaimana pendapat saudara tentang kecepatan waktu dalam memberikan pelayanan?'),
 	(5, 'Bagaimana pendapat saudara tentang kewajaran biaya atau tarif dalam pelayanan?
-(Jika saudara peserta BPJS/Asuransi tidak perlu diisi)', NULL, NULL),
-	(6, 'Bagaimana pendapat saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar pelayanan dengan hasil yang diberikan?', NULL, NULL),
-	(7, 'Bagaimana pendapat saudara tentang kompetensi/kemampuan petugas dalam pelayanan?', NULL, NULL),
-	(8, 'Bagaimana pendapat saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?', NULL, NULL),
-	(9, 'Bagaimana pendapat saudara tentang penanganan pengaduan pengguna layanan?', NULL, NULL),
-	(10, 'Bagaimana pendapat saudara tentang kualitas sarana dan prasarana?', NULL, NULL);
+(Jika saudara peserta BPJS/Asuransi tidak perlu diisi)'),
+	(6, 'Bagaimana pendapat saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar pelayanan dengan hasil yang diberikan?'),
+	(7, 'Bagaimana pendapat saudara tentang kompetensi/kemampuan petugas dalam pelayanan?'),
+	(8, 'Bagaimana pendapat saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?'),
+	(9, 'Bagaimana pendapat saudara tentang penanganan pengaduan pengguna layanan?'),
+	(10, 'Bagaimana pendapat saudara tentang kualitas sarana dan prasarana?');
 /*!40000 ALTER TABLE "responden" ENABLE KEYS */;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
