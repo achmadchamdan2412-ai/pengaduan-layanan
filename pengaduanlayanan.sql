@@ -14,6 +14,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Dumping structure for table public.asuransi
+DROP TABLE IF EXISTS "asuransi";
 CREATE TABLE IF NOT EXISTS "asuransi" (
 	"id" INTEGER NOT NULL,
 	"nama_asuransi" VARCHAR(50) NULL DEFAULT NULL,
@@ -29,6 +30,7 @@ INSERT INTO "asuransi" ("id", "nama_asuransi") VALUES
 /*!40000 ALTER TABLE "asuransi" ENABLE KEYS */;
 
 -- Dumping structure for table public.formulir
+DROP TABLE IF EXISTS "formulir";
 CREATE TABLE IF NOT EXISTS "formulir" (
 	"id" BIGINT NOT NULL,
 	"alamat" TEXT NULL DEFAULT NULL,
@@ -46,8 +48,9 @@ DELETE FROM "formulir";
 /*!40000 ALTER TABLE "formulir" DISABLE KEYS */;
 /*!40000 ALTER TABLE "formulir" ENABLE KEYS */;
 
--- Dumping structure for table public.kuesioner
-CREATE TABLE IF NOT EXISTS "kuesioner" (
+-- Dumping structure for table public.kepuasan
+DROP TABLE IF EXISTS "kepuasan";
+CREATE TABLE IF NOT EXISTS "kepuasan" (
 	"id" BIGINT NOT NULL,
 	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
 	"survey_date" DATE NOT NULL,
@@ -65,10 +68,7 @@ CREATE TABLE IF NOT EXISTS "kuesioner" (
 	"q7" SMALLINT NOT NULL,
 	"q8" SMALLINT NOT NULL,
 	"q9" SMALLINT NOT NULL,
-	"nama_pasien" VARCHAR(150) NOT NULL,
-	"alamat" TEXT NOT NULL,
-	"nomor_hp" VARCHAR(30) NOT NULL,
-	"keluhan" TEXT NULL DEFAULT NULL,
+	"penjamin" VARCHAR NULL DEFAULT 'UMUM',
 	PRIMARY KEY ("id"),
 	CONSTRAINT "chk_q1" CHECK (((q1 >= 1) AND (q1 <= 4))),
 	CONSTRAINT "chk_q2" CHECK (((q2 >= 1) AND (q2 <= 4))),
@@ -81,25 +81,28 @@ CREATE TABLE IF NOT EXISTS "kuesioner" (
 	CONSTRAINT "chk_q9" CHECK (((q9 >= 1) AND (q9 <= 4)))
 );
 
--- Dumping data for table public.kuesioner: 12 rows
-DELETE FROM "kuesioner";
-/*!40000 ALTER TABLE "kuesioner" DISABLE KEYS */;
-INSERT INTO "kuesioner" ("id", "created_at", "survey_date", "survey_time", "gender", "education", "jobs", "services", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "nama_pasien", "alamat", "nomor_hp", "keluhan") VALUES
-	(1, '2026-01-28 08:23:05.114995', '2026-01-28', '08-12', 'male', 's1', 'pelajar', 'admissi', 3, 4, 3, 3, 3, 4, 3, 3, 4, 'Rio Roi', 'Jl. Menganti', '08123123123', 'Kurang ramah adqwdqfnqwfqw njasncjwvbejbfqw vjwnfjqnfjn ndiqwfhiquwv nqowdjoqiwnf sjdnjqwifhq'),
-	(2, '2026-01-28 10:09:44.123517', '2026-01-28', '08-12', 'male', 's1', 'wirausaha,pelajar', 'admissi', 4, 1, 2, 4, 3, 3, 2, 1, 4, 'Bahenol', 'Jakarta, Jl. Kemanggisan 34', '082112346758', 'wifi lemot, lift rusak, lantai licin, ac mati, pegawai jelek, tidak ramah, toxic, hitam, gigi kuning'),
-	(3, '2026-01-28 10:18:45.06348', '2026-01-20', '08-12', 'male', 'SMA', 'Karyawan Swasta', 'Pendaftaran', 4, 4, 3, 4, 3, 4, 4, 3, 4, 'Ahmad Fauzi', 'Jl. Merdeka No. 12', '081234567890', 'Pelayanan sudah cukup baik'),
-	(4, '2026-01-28 10:18:45.06348', '2026-01-20', '08-12', 'female', 'S1', 'Ibu Rumah Tangga', 'Poli Umum', 3, 3, 3, 2, 3, 3, 3, 2, 3, 'Siti Aminah', 'Jl. Kenanga No. 5', '081298765432', 'Antrian agak lama'),
-	(6, '2026-01-28 10:18:45.06348', '2026-01-21', '08-12', 'female', 'SMA', 'Mahasiswa', 'Apotek', 3, 4, 3, 3, 4, 3, 3, 4, 3, 'Rina Lestari', 'Jl. Mawar Indah', '085677889900', 'Obat tersedia lengkap'),
-	(8, '2026-01-28 10:18:45.06348', '2026-01-22', '08-12', 'female', 'S1', 'Guru', 'Poli Anak', 4, 4, 4, 4, 4, 4, 4, 4, 4, 'Nur Aisyah', 'Jl. Melati No. 7', '082233344455', 'Pelayanan cepat dan jelas'),
-	(10, '2026-01-28 10:18:45.06348', '2026-01-22', '12-18', 'female', 'D3', 'Perawat', 'Pendaftaran', 2, 3, 3, 2, 3, 3, 2, 3, 3, 'Dewi Anggraini', 'Komplek Cendana', '083344455566', 'Sistem antrian perlu diperbaiki'),
-	(12, '2026-01-28 10:18:45.06348', '2026-01-23', '12-18', 'female', 'SMA', 'Pedagang', 'Apotek', 3, 3, 3, 3, 3, 3, 3, 3, 3, 'Lina Marlina', 'Jl. Anggrek No. 9', '085266677788', 'Pelayanan sudah memuaskan'),
-	(5, '2026-01-28 10:18:45.06348', '2026-01-21', '12-18', 'male', 'D3', 'Wiraswasta', 'Laboratorium', 4, 4, 4, 4, 4, 4, 4, 4, 4, 'Budi Santoso', 'Perum Griya Sejahtera', '082112223333', 'Petugas ramah dan informatif'),
-	(7, '2026-01-28 10:18:45.06348', '2026-01-21', '12-18', 'male', 'SMP', 'Petani', 'Poli Gigi', 2, 3, 2, 3, 2, 3, 2, 3, 2, 'Dedi Kurniawan', 'Desa Sukamaju', '081377788899', 'Ruang tunggu kurang nyaman'),
-	(9, '2026-01-28 10:18:45.06348', '2026-01-22', '08-12', 'male', 'SMA', 'Supir', 'IGD', 3, 3, 4, 4, 3, 4, 3, 4, 3, 'Agus Salim', 'Jl. Raya Timur', '081999888777', 'Petugas sigap'),
-	(11, '2026-01-28 10:18:45.06348', '2026-01-23', '08-12', 'male', 'S1', 'PNS', 'Poli Penyakit Dalam', 4, 4, 4, 3, 4, 4, 4, 3, 4, 'Hendra Wijaya', 'Jl. Veteran', '081122334455', 'Dokter komunikatif');
-/*!40000 ALTER TABLE "kuesioner" ENABLE KEYS */;
+-- Dumping data for table public.kepuasan: 14 rows
+DELETE FROM "kepuasan";
+/*!40000 ALTER TABLE "kepuasan" DISABLE KEYS */;
+INSERT INTO "kepuasan" ("id", "created_at", "survey_date", "survey_time", "gender", "education", "jobs", "services", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "penjamin") VALUES
+	(14, '2026-01-28 13:43:44.432164', '2026-01-28', '12-18', 'male', 's1', 'pelajar', 'radiologi', 1, 4, 4, 3, 2, 4, 1, 1, 4, 'bpjs'),
+	(4, '2026-01-28 10:18:45.06348', '2026-01-20', '08-12', 'female', 'S1', 'Ibu Rumah Tangga', 'Poli Umum', 3, 3, 3, 2, 3, 3, 3, 2, 3, NULL),
+	(6, '2026-01-28 10:18:45.06348', '2026-01-21', '08-12', 'female', 'SMA', 'Mahasiswa', 'Apotek', 3, 4, 3, 3, 4, 3, 3, 4, 3, NULL),
+	(10, '2026-01-28 10:18:45.06348', '2026-01-22', '12-18', 'female', 'D3', 'Perawat', 'Pendaftaran', 2, 3, 3, 2, 3, 3, 2, 3, 3, NULL),
+	(7, '2026-01-28 10:18:45.06348', '2026-01-21', '12-18', 'male', 'SMP', 'Petani', 'Poli Gigi', 2, 3, 2, 3, 2, 3, 2, 3, 2, NULL),
+	(9, '2026-01-28 10:18:45.06348', '2026-01-22', '08-12', 'male', 'SMA', 'Supir', 'IGD', 3, 3, 4, 4, 3, 4, 3, 4, 3, NULL),
+	(12, '2026-01-28 10:18:45.06348', '2026-01-23', '12-18', 'female', 'SMA', 'Pedagang', 'Apotek', 3, 3, 3, 3, 3, 2, 3, 1, 3, NULL),
+	(11, '2026-01-28 10:18:45.06348', '2026-01-23', '08-12', 'male', 'S1', 'PNS', 'Poli Penyakit Dalam', 4, 4, 4, 3, 4, 1, 4, 3, 4, NULL),
+	(3, '2026-01-28 10:18:45.06348', '2026-01-20', '08-12', 'male', 'SMA', 'Karyawan Swasta', 'Pendaftaran', 4, 4, 3, 1, 3, 2, 4, 3, 4, NULL),
+	(2, '2026-01-28 10:09:44.123517', '2026-01-28', '08-12', 'male', 's1', 'wirausaha,pelajar', 'admissi', 4, 1, 2, 4, 2, 3, 2, 1, 4, NULL),
+	(5, '2026-01-28 10:18:45.06348', '2026-01-21', '12-18', 'male', 'D3', 'Wiraswasta', 'Laboratorium', 4, 4, 4, 3, 1, 4, 2, 4, 4, NULL),
+	(8, '2026-01-28 10:18:45.06348', '2026-01-22', '08-12', 'female', 'S1', 'Guru', 'Poli Anak', 4, 1, 4, 2, 4, 4, 3, 4, 4, NULL),
+	(13, '2026-01-28 13:19:30.296116', '2026-01-28', '12-18', 'male', 'sma', 'wirausaha', 'igd', 4, 2, 4, 3, 3, 2, 4, 3, 4, NULL),
+	(1, '2026-01-28 08:23:05.114995', '2026-01-28', '08-12', 'male', 's1', 'pelajar', 'admissi', 3, 4, 3, 3, 3, 4, 3, 3, 4, '');
+/*!40000 ALTER TABLE "kepuasan" ENABLE KEYS */;
 
 -- Dumping structure for table public.layanan
+DROP TABLE IF EXISTS "layanan";
 CREATE TABLE IF NOT EXISTS "layanan" (
 	"id" INTEGER NOT NULL,
 	"nama_layanan" VARCHAR(100) NULL DEFAULT NULL,
@@ -123,6 +126,7 @@ INSERT INTO "layanan" ("id", "nama_layanan") VALUES
 /*!40000 ALTER TABLE "layanan" ENABLE KEYS */;
 
 -- Dumping structure for table public.nilai
+DROP TABLE IF EXISTS "nilai";
 CREATE TABLE IF NOT EXISTS "nilai" (
 	"id" INTEGER NOT NULL,
 	"keterangan" INTEGER NULL DEFAULT NULL,
@@ -140,6 +144,7 @@ INSERT INTO "nilai" ("id", "keterangan") VALUES
 /*!40000 ALTER TABLE "nilai" ENABLE KEYS */;
 
 -- Dumping structure for table public.profil
+DROP TABLE IF EXISTS "profil";
 CREATE TABLE IF NOT EXISTS "profil" (
 	"id" BIGINT NOT NULL,
 	"jenis_kelamin" SMALLINT NOT NULL DEFAULT 0,
@@ -158,13 +163,14 @@ DELETE FROM "profil";
 /*!40000 ALTER TABLE "profil" ENABLE KEYS */;
 
 -- Dumping structure for table public.responden
+DROP TABLE IF EXISTS "responden";
 CREATE TABLE IF NOT EXISTS "responden" (
 	"id" INTEGER NOT NULL,
 	"pertanyaan" TEXT NULL DEFAULT NULL,
 	PRIMARY KEY ("id")
 );
 
--- Dumping data for table public.responden: 9 rows
+-- Dumping data for table public.responden: -1 rows
 DELETE FROM "responden";
 /*!40000 ALTER TABLE "responden" DISABLE KEYS */;
 INSERT INTO "responden" ("id", "pertanyaan") VALUES
