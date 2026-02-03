@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               PostgreSQL 17.7 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
+-- Server version:               PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35221, 64-bit
 -- Server OS:                    
 -- HeidiSQL Version:             12.8.0.6908
 -- --------------------------------------------------------
@@ -14,7 +14,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Dumping structure for table public.jenis_kelamin
-DROP TABLE IF EXISTS "jenis_kelamin";
 CREATE TABLE IF NOT EXISTS "jenis_kelamin" (
 	"id" SERIAL NOT NULL,
 	"nama" CHAR(1) NOT NULL,
@@ -22,27 +21,41 @@ CREATE TABLE IF NOT EXISTS "jenis_kelamin" (
 );
 
 -- Dumping data for table public.jenis_kelamin: -1 rows
-DELETE FROM "jenis_kelamin";
 /*!40000 ALTER TABLE "jenis_kelamin" DISABLE KEYS */;
+INSERT INTO "jenis_kelamin" ("id", "nama") VALUES
+	(1, 'L'),
+	(2, 'P');
 /*!40000 ALTER TABLE "jenis_kelamin" ENABLE KEYS */;
 
 -- Dumping structure for table public.kuisioner
-DROP TABLE IF EXISTS "kuisioner";
 CREATE TABLE IF NOT EXISTS "kuisioner" (
 	"id" SERIAL NOT NULL,
 	"pertanyaan_id" INTEGER NULL DEFAULT NULL,
 	"nilai" SMALLINT NULL DEFAULT NULL,
-	"survey_id" INTEGER NULL DEFAULT NULL,
-	PRIMARY KEY ("id")
+	"profil_id" INTEGER NULL DEFAULT NULL,
+	"survey_date" DATE NULL DEFAULT NULL,
+	"survey_time" VARCHAR(10) NULL DEFAULT NULL,
+	"created_at" TIMESTAMP NULL DEFAULT now(),
+	PRIMARY KEY ("id"),
+	CONSTRAINT "FK_kuisioner_pertanyaan" FOREIGN KEY ("pertanyaan_id") REFERENCES "pertanyaan" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT "FK_kuisioner_profil" FOREIGN KEY ("profil_id") REFERENCES "profil" ("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- Dumping data for table public.kuisioner: -1 rows
-DELETE FROM "kuisioner";
+-- Dumping data for table public.kuisioner: 9 rows
 /*!40000 ALTER TABLE "kuisioner" DISABLE KEYS */;
+INSERT INTO "kuisioner" ("id", "pertanyaan_id", "nilai", "profil_id", "survey_date", "survey_time", "created_at") VALUES
+	(1, 4, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.5507'),
+	(2, 5, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.553953'),
+	(3, 6, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.554319'),
+	(4, 7, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.554601'),
+	(5, 8, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.554919'),
+	(6, 9, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.555204'),
+	(7, 10, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.555467'),
+	(8, 11, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.555733'),
+	(9, 12, 4, 5, '2026-02-03', '12-18', '2026-02-03 20:21:04.556022');
 /*!40000 ALTER TABLE "kuisioner" ENABLE KEYS */;
 
 -- Dumping structure for table public.pekerjaan
-DROP TABLE IF EXISTS "pekerjaan";
 CREATE TABLE IF NOT EXISTS "pekerjaan" (
 	"id" SERIAL NOT NULL,
 	"nama" VARCHAR NOT NULL,
@@ -50,12 +63,17 @@ CREATE TABLE IF NOT EXISTS "pekerjaan" (
 );
 
 -- Dumping data for table public.pekerjaan: -1 rows
-DELETE FROM "pekerjaan";
 /*!40000 ALTER TABLE "pekerjaan" DISABLE KEYS */;
+INSERT INTO "pekerjaan" ("id", "nama") VALUES
+	(1, 'PNS'),
+	(2, 'TNI'),
+	(3, 'POLISI'),
+	(4, 'SWASTA'),
+	(5, 'WIRAUSAHA'),
+	(6, 'LAINNYA');
 /*!40000 ALTER TABLE "pekerjaan" ENABLE KEYS */;
 
 -- Dumping structure for table public.pelayanan
-DROP TABLE IF EXISTS "pelayanan";
 CREATE TABLE IF NOT EXISTS "pelayanan" (
 	"id" SERIAL NOT NULL,
 	"nama" VARCHAR NULL DEFAULT NULL,
@@ -63,12 +81,21 @@ CREATE TABLE IF NOT EXISTS "pelayanan" (
 );
 
 -- Dumping data for table public.pelayanan: -1 rows
-DELETE FROM "pelayanan";
 /*!40000 ALTER TABLE "pelayanan" DISABLE KEYS */;
+INSERT INTO "pelayanan" ("id", "nama") VALUES
+	(1, 'ADMISI'),
+	(2, 'GIZI'),
+	(3, 'IGD'),
+	(4, 'ICU'),
+	(5, 'OPERASI'),
+	(6, 'RADIOLOGI'),
+	(7, 'LABORATORIUM'),
+	(8, 'FARMASI'),
+	(9, 'RAWAT INAP'),
+	(10, 'RAWAT JALAN');
 /*!40000 ALTER TABLE "pelayanan" ENABLE KEYS */;
 
 -- Dumping structure for table public.pendidikan
-DROP TABLE IF EXISTS "pendidikan";
 CREATE TABLE IF NOT EXISTS "pendidikan" (
 	"id" SERIAL NOT NULL,
 	"nama" VARCHAR NOT NULL,
@@ -76,12 +103,18 @@ CREATE TABLE IF NOT EXISTS "pendidikan" (
 );
 
 -- Dumping data for table public.pendidikan: -1 rows
-DELETE FROM "pendidikan";
 /*!40000 ALTER TABLE "pendidikan" DISABLE KEYS */;
+INSERT INTO "pendidikan" ("id", "nama") VALUES
+	(1, 'SD'),
+	(2, 'SMP'),
+	(3, 'SMA'),
+	(4, 'S1'),
+	(5, 'S2'),
+	(6, 'S3'),
+	(7, 'LAINNYA');
 /*!40000 ALTER TABLE "pendidikan" ENABLE KEYS */;
 
 -- Dumping structure for table public.penjamin
-DROP TABLE IF EXISTS "penjamin";
 CREATE TABLE IF NOT EXISTS "penjamin" (
 	"id" SERIAL NOT NULL,
 	"nama" VARCHAR NOT NULL,
@@ -89,12 +122,13 @@ CREATE TABLE IF NOT EXISTS "penjamin" (
 );
 
 -- Dumping data for table public.penjamin: -1 rows
-DELETE FROM "penjamin";
 /*!40000 ALTER TABLE "penjamin" DISABLE KEYS */;
+INSERT INTO "penjamin" ("id", "nama") VALUES
+	(1, 'UMUM'),
+	(2, 'BPJS');
 /*!40000 ALTER TABLE "penjamin" ENABLE KEYS */;
 
 -- Dumping structure for table public.pertanyaan
-DROP TABLE IF EXISTS "pertanyaan";
 CREATE TABLE IF NOT EXISTS "pertanyaan" (
 	"id" SERIAL NOT NULL,
 	"deskripsi" TEXT NOT NULL,
@@ -102,12 +136,20 @@ CREATE TABLE IF NOT EXISTS "pertanyaan" (
 );
 
 -- Dumping data for table public.pertanyaan: -1 rows
-DELETE FROM "pertanyaan";
 /*!40000 ALTER TABLE "pertanyaan" DISABLE KEYS */;
+INSERT INTO "pertanyaan" ("id", "deskripsi") VALUES
+	(4, 'Bagaimana pendapat saudara tentang kesesuaian persyaratan pelayanan dengan jenis pelayanannya?'),
+	(5, 'Bagaimana pemahaman saudara tentang kemudahan prosedur pelayanan di unit ini?'),
+	(6, 'Bagaimana pendapat saudara tentang kecepatan waktu dalam memberikan pelayanan?'),
+	(7, 'Bagaimana pendapat saudara tentang kewajaran biaya atau tarif dalam pelayanan? (Jika saudara peserta BPJS/Asuransi tidak perlu diisi)'),
+	(8, 'Bagaimana pendapat saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar pelayanan dengan hasil yang diberikan?'),
+	(9, 'Bagaimana pendapat saudara tentang kompetensi atau kemampuan petugas dalam pelayanan?'),
+	(10, 'Bagaimana pendapat saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?'),
+	(11, 'Bagaimana pendapat saudara tentang penanganan pengaduan pengguna layanan?'),
+	(12, 'Bagaimana pendapat saudara tentang kualitas sarana dan prasarana?');
 /*!40000 ALTER TABLE "pertanyaan" ENABLE KEYS */;
 
 -- Dumping structure for table public.profil
-DROP TABLE IF EXISTS "profil";
 CREATE TABLE IF NOT EXISTS "profil" (
 	"id" SERIAL NOT NULL,
 	"jenis_kelamin_id" INTEGER NULL DEFAULT NULL,
@@ -124,23 +166,11 @@ CREATE TABLE IF NOT EXISTS "profil" (
 );
 
 -- Dumping data for table public.profil: -1 rows
-DELETE FROM "profil";
 /*!40000 ALTER TABLE "profil" DISABLE KEYS */;
+INSERT INTO "profil" ("id", "jenis_kelamin_id", "pendidikan_id", "pekerjaan_id", "pelayanan_id", "penjamin_id") VALUES
+	(4, 2, 3, 4, 7, 1),
+	(5, 1, 5, 5, 6, 1);
 /*!40000 ALTER TABLE "profil" ENABLE KEYS */;
-
--- Dumping structure for table public.survey
-DROP TABLE IF EXISTS "survey";
-CREATE TABLE IF NOT EXISTS "survey" (
-	"id" SERIAL NOT NULL,
-	"profil_id" INTEGER NULL DEFAULT NULL,
-	PRIMARY KEY ("id"),
-	CONSTRAINT "FK_survey_profil" FOREIGN KEY ("profil_id") REFERENCES "profil" ("id") ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- Dumping data for table public.survey: -1 rows
-DELETE FROM "survey";
-/*!40000 ALTER TABLE "survey" DISABLE KEYS */;
-/*!40000 ALTER TABLE "survey" ENABLE KEYS */;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

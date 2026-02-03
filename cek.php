@@ -11,14 +11,12 @@ $offset = ($page - 1) * $limit;
 
 
 $q = pg_query($conn, "
-    SELECT id, created_at, nama_pasien, alamat, survey_date, survey_time,
-           gender, education, jobs, services, keluhan, nomor_hp,
-           q1,q2,q3,q4,q5,q6,q7,q8,q9
-    FROM kuesioner
+    SELECT *
+    FROM kepuasan
     ORDER BY id DESC
     LIMIT $limit OFFSET $offset
 ");
-$total_q = pg_query($conn, "SELECT COUNT(*) FROM kuesioner");
+$total_q = pg_query($conn, "SELECT COUNT(*) FROM kepuasan");
 $total_row = pg_fetch_row($total_q);
 $total_data = (int)$total_row[0];
 $total_page = ceil($total_data / $limit);
@@ -129,6 +127,10 @@ if (!$q) die(pg_last_error($conn));
       font-weight: 700;
       font-size: 13px;
       color: #fff;
+    }
+
+    .n0 {
+      background: #6b7280;
     }
 
     .n1 {
@@ -350,8 +352,6 @@ if (!$q) die(pg_last_error($conn));
           <tr>
             <th>No.</th>
             <th>Created</th>
-            <th>Nama</th>
-            <th>Alamat</th>
             <th>Tanggal</th>
             <th>Jam</th>
             <th>Detail</th>
@@ -374,18 +374,13 @@ if (!$q) die(pg_last_error($conn));
             <tr>
               <td><?= $no++ ?></td>
               <td class="left"><?= $r['created_at'] ?></td>
-              <td class="left"><?= htmlspecialchars($r['nama_pasien']) ?></td>
-              <td class="left"><?= htmlspecialchars($r['alamat']) ?></td>
               <td><?= $r['survey_date'] ?></td>
               <td><?= $r['survey_time'] ?></td>
               <td>
                 <button class="btn-detail"
-                  data-nama="<?= htmlspecialchars($r['nama_pasien']) ?>"
-                  data-alamat="<?= htmlspecialchars($r['alamat'] ?? '-') ?>"
                   data-education="<?= htmlspecialchars($r['education'] ?? '-') ?>"
                   data-jobs="<?= htmlspecialchars($r['jobs'] ?? '-') ?>"
-                  data-services="<?= htmlspecialchars($r['services'] ?? '-') ?>"
-                  data-keluhan="<?= htmlspecialchars($r['keluhan'] ?? 'Tidak ada keluhan') ?>">
+                  data-services="<?= htmlspecialchars($r['services'] ?? '-') ?>">
                   👁
                 </button>
               </td>
@@ -394,7 +389,7 @@ if (!$q) die(pg_last_error($conn));
               <?php for ($i = 1; $i <= 9; $i++):
                 $v = (int)$r["q$i"]; ?>
                 <td>
-                  <span class="badge n<?= $v ?>"><?= $v ?></span>
+                  <span class="badge n<?= $v ?>"><?= $v === 0 ? '-' : $v ?></span>
                 </td>
               <?php endfor; ?>
             </tr>
@@ -411,30 +406,30 @@ if (!$q) die(pg_last_error($conn));
       <span class="badge n4">4</span>Sangat Sesuai
     </div>
     <?php if ($total_page > 1): ?>
-            <div class="pagination">
-  
-              <?php if ($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?>">‹ Prev</a>
-              <?php else: ?>
-                <span class="disabled">‹ Prev</span>
-              <?php endif; ?>
-  
-              <?php for ($i = 1; $i <= $total_page; $i++): ?>
-                <?php if ($i == $page): ?>
-                  <span class="active"><?= $i ?></span>
-                <?php else: ?>
-                  <a href="?page=<?= $i ?>"><?= $i ?></a>
-                <?php endif; ?>
-              <?php endfor; ?>
-  
-              <?php if ($page < $total_page): ?>
-                <a href="?page=<?= $page + 1 ?>">Next ›</a>
-              <?php else: ?>
-                <span class="disabled">Next ›</span>
-              <?php endif; ?>
-  
-            </div>
+      <div class="pagination">
+
+        <?php if ($page > 1): ?>
+          <a href="?page=<?= $page - 1 ?>">‹ Prev</a>
+        <?php else: ?>
+          <span class="disabled">‹ Prev</span>
+        <?php endif; ?>
+
+        <?php for ($i = 1; $i <= $total_page; $i++): ?>
+          <?php if ($i == $page): ?>
+            <span class="active"><?= $i ?></span>
+          <?php else: ?>
+            <a href="?page=<?= $i ?>"><?= $i ?></a>
           <?php endif; ?>
+        <?php endfor; ?>
+
+        <?php if ($page < $total_page): ?>
+          <a href="?page=<?= $page + 1 ?>">Next ›</a>
+        <?php else: ?>
+          <span class="disabled">Next ›</span>
+        <?php endif; ?>
+
+      </div>
+    <?php endif; ?>
   </div>
 
   <div class="modal-overlay" id="modalDetail">
@@ -478,7 +473,7 @@ if (!$q) die(pg_last_error($conn));
           <p id="d_keluhan"></p>
         </div>
       </div>
-      
+
       <script>
         const modal = document.getElementById('modalDetail');
 

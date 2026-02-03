@@ -13,6 +13,7 @@ body {
 }
 
 .alamatrs {
+  font-size: 12px !important;
   margin-top: 0;
   margin-bottom: 4px;  /* jarak ke teks bawah */
 }
@@ -77,7 +78,6 @@ body {
 
 .header-text h1 {
   font-size: 28px;
-  margin-bottom: 5px;
   letter-spacing: 0.5px;
   color: white;
 }
