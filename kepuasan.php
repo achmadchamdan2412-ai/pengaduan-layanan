@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $service_value = $service_locked ? $service_from_url : trim((string)($_POST['service'] ?? ''));
   if ($service_value === '') $valid = false;
 
-  // jobs checkbox minimal 1
+  // jobs radio minimal 1
   if (!isset($_POST['jobs']) || count((array)$_POST['jobs']) === 0) {
     $valid = false;
   }
@@ -140,7 +140,7 @@ function is_time_in_range($time, $start, $end)
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuesioner Kepuasan Pasien - RS Ekahusada</title>
+  <title>Kuesioner Kepuasan Pasien - RS Eka husada</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -152,7 +152,10 @@ function is_time_in_range($time, $start, $end)
           <img src="images/logo.png" alt="Logo RS Ekahusada" class="logo-icon">
         </div>
         <div class="header-text">
-          <h1>RS EKAHUSADA</h1>
+          <h1 class="namars">RUMAH SAKIT EKA HUSADA</h1>
+          <h5 class="alamatrs"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill maps" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
+            </svg> Jl. Raya Kediri No. 123, Kediri</h5>
           <p>KUESIONER SURVEI KEPUASAN PASIEN</p>
         </div>
       </div>
@@ -226,16 +229,16 @@ function is_time_in_range($time, $start, $end)
 
           <div class="form-row">
             <div class="form-field">
-              <label>Pekerjaan * <span style="color:#e74c3c;">(Pilih salah satu atau lebih)</span></label>
-              <div class="checkbox-group">
-                <div class="checkbox-option"><input type="checkbox" id="pns" name="jobs[]" value="pns"><label for="pns">PNS</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="tni" name="jobs[]" value="tni"><label for="tni">TNI</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="polisi" name="jobs[]" value="polisi"><label for="polisi">POLISI</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="swasta" name="jobs[]" value="swasta"><label for="swasta">SWASTA</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="wirausaha" name="jobs[]" value="wirausaha"><label for="wirausaha">WIRAUSAHA</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="petani" name="jobs[]" value="petani"><label for="petani">PETANI</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="pelajar" name="jobs[]" value="pelajar"><label for="pelajar">PELAJAR/MAHASISWA</label></div>
-                <div class="checkbox-option"><input type="checkbox" id="lainnya" name="jobs[]" value="lainnya"><label for="lainnya">LAINNYA</label></div>
+              <label>Pekerjaan * <span style="color:#e74c3c;">(Pilih salah satu)</span></label>
+              <div class="radio-group">
+                <div class="radio-option"><input type="radio" id="pns" name="jobs[]" value="pns"><label for="pns">PNS</label></div>
+                <div class="radio-option"><input type="radio" id="tni" name="jobs[]" value="tni"><label for="tni">TNI</label></div>
+                <div class="radio-option"><input type="radio" id="polisi" name="jobs[]" value="polisi"><label for="polisi">POLISI</label></div>
+                <div class="radio-option"><input type="radio" id="swasta" name="jobs[]" value="swasta"><label for="swasta">SWASTA</label></div>
+                <div class="radio-option"><input type="radio" id="wirausaha" name="jobs[]" value="wirausaha"><label for="wirausaha">WIRAUSAHA</label></div>
+                <div class="radio-option"><input type="radio" id="petani" name="jobs[]" value="petani"><label for="petani">PETANI</label></div>
+                <div class="radio-option"><input type="radio" id="pelajar" name="jobs[]" value="pelajar"><label for="pelajar">PELAJAR/MAHASISWA</label></div>
+                <div class="radio-option"><input type="radio" id="lainnya" name="jobs[]" value="lainnya"><label for="lainnya">LAINNYA</label></div>
               </div>
             </div>
           </div>
@@ -519,7 +522,7 @@ function is_time_in_range($time, $start, $end)
       </div>
 
       <div style="margin-top: 20px; font-size: 14px; color: rgba(255,255,255,0.8);">
-        <p>RS Ekahusada - Melayani Dengan Sepenuh Hati</p>
+        <p>Rumah Sakit Eka Husada - Melayani Dengan Sepenuh Hati</p>
       </div>
     </div>
   </footer>
