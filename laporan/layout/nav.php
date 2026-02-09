@@ -9,7 +9,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                 <i class="fas fa-user fa-fw"></i>
-                <span>Chamdan</span>
+                <span>Achmad Chamdan</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Logout</a></li>
