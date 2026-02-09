@@ -10,26 +10,35 @@ $_SESSION['tipe_form'] = 'kepuasan';
    LOCK SERVICE VIA URL ?service=...
    ========================= */
 $allowed_services = [
-  'admisi','igd','lab','farmasi','radiologi','gizi','icu','operasi','rawat_jalan',
-  'rawat_inap','laboratorium'
+  'admisi',
+  'igd',
+  'lab',
+  'farmasi',
+  'radiologi',
+  'gizi',
+  'icu',
+  'operasi',
+  'rawat_jalan',
+  'rawat_inap',
+  'laboratorium'
 ];
 
 /* =========================
    Ambil semua pelayanan untuk mapping slug -> id
    ========================= */
 try {
-    $pelayanan_rows = $pdo->query("SELECT id, nama FROM pelayanan ORDER BY id ASC")->fetchAll();
+  $pelayanan_rows = $pdo->query("SELECT id, nama FROM pelayanan ORDER BY id ASC")->fetchAll();
 } catch (PDOException $e) {
-    error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
-    exit("Gagal mengambil data pelayanan");
+  error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
+  exit("Gagal mengambil data pelayanan");
 }
 
 $service_slug_to_id = [];
 foreach ($pelayanan_rows as $r) {
-    $nama = strtolower(trim((string)$r['nama']));
-    $slug = preg_replace('/[^a-z0-9]+/', '_', $nama);
-    $slug = trim((string)$slug, '_');
-    $service_slug_to_id[$slug] = (int)$r['id'];
+  $nama = strtolower(trim((string)$r['nama']));
+  $slug = preg_replace('/[^a-z0-9]+/', '_', $nama);
+  $slug = trim((string)$slug, '_');
+  $service_slug_to_id[$slug] = (int)$r['id'];
 }
 
 // Status lock
@@ -37,11 +46,11 @@ $service_locked = false;
 $service_from_url_id = null;
 
 if (isset($_GET['service'])) {
-    $candidate = strtolower(trim((string)$_GET['service']));
-    if (in_array($candidate, $allowed_services, true) && isset($service_slug_to_id[$candidate])) {
-        $service_locked = true;
-        $service_from_url_id = (int)$service_slug_to_id[$candidate];
-    }
+  $candidate = strtolower(trim((string)$_GET['service']));
+  if (in_array($candidate, $allowed_services, true) && isset($service_slug_to_id[$candidate])) {
+    $service_locked = true;
+    $service_from_url_id = (int)$service_slug_to_id[$candidate];
+  }
 }
 
 /* =========================
@@ -54,14 +63,14 @@ $serverClock_open = date('H:i');
    AMBIL MASTER DATA
    ========================= */
 try {
-    $jenisKelamin_rows = $pdo->query("SELECT * FROM jenis_kelamin ORDER BY id ASC")->fetchAll();
-    $pendidikan_rows   = $pdo->query("SELECT * FROM pendidikan ORDER BY id ASC")->fetchAll();
-    $pekerjaan_rows    = $pdo->query("SELECT * FROM pekerjaan ORDER BY id ASC")->fetchAll();
-    $penjamin_rows     = $pdo->query("SELECT * FROM penjamin ORDER BY id ASC")->fetchAll();
-    $pertanyaan_rows   = $pdo->query("SELECT * FROM pertanyaan ORDER BY id ASC")->fetchAll();
+  $jenisKelamin_rows = $pdo->query("SELECT * FROM jenis_kelamin ORDER BY id ASC")->fetchAll();
+  $pendidikan_rows   = $pdo->query("SELECT * FROM pendidikan ORDER BY id ASC")->fetchAll();
+  $pekerjaan_rows    = $pdo->query("SELECT * FROM pekerjaan ORDER BY id ASC")->fetchAll();
+  $penjamin_rows     = $pdo->query("SELECT * FROM penjamin ORDER BY id ASC")->fetchAll();
+  $pertanyaan_rows   = $pdo->query("SELECT * FROM pertanyaan ORDER BY id ASC")->fetchAll();
 } catch (PDOException $e) {
-    error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
-    exit("Gagal mengambil master data");
+  error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
+  exit("Gagal mengambil master data");
 }
 
 /* =========================
@@ -69,10 +78,10 @@ try {
    ========================= */
 $bpjs_id = null;
 foreach ($penjamin_rows as $row) {
-    if (strtoupper(trim((string)$row['nama'])) === 'BPJS') {
-        $bpjs_id = (int)$row['id'];
-        break;
-    }
+  if (strtoupper(trim((string)$row['nama'])) === 'BPJS') {
+    $bpjs_id = (int)$row['id'];
+    break;
+  }
 }
 
 /* =========================
@@ -80,7 +89,7 @@ foreach ($penjamin_rows as $row) {
    ========================= */
 $Q4_ID = null;
 try {
-    $stmtQ4 = $pdo->query("
+  $stmtQ4 = $pdo->query("
       SELECT id
       FROM pertanyaan
       WHERE LOWER(deskripsi) LIKE '%biaya%'
@@ -88,9 +97,9 @@ try {
       ORDER BY id ASC
       LIMIT 1
     ");
-    $Q4_ID = (int)($stmtQ4->fetchColumn() ?: 0);
+  $Q4_ID = (int)($stmtQ4->fetchColumn() ?: 0);
 } catch (PDOException $e) {
-    $Q4_ID = 0;
+  $Q4_ID = 0;
 }
 
 if (!$Q4_ID) $Q4_ID = 4; // fallback
@@ -102,112 +111,128 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Kunci tanggal & jam berdasarkan server saat submit
-    $surveyDateFinal = date('Y-m-d');
-    $surveyTimeFinal = date('H:i');
+  // Kunci tanggal & jam berdasarkan server saat submit
+  $surveyDateFinal = date('Y-m-d');
+  $surveyTimeFinal = date('H:i');
 
-    // ========= VALIDASI DASAR =========
-    $valid = true;
+  // ========= VALIDASI DASAR =========
+  $valid = true;
 
-    $required = ['jenis_kelamin','pendidikan','pekerjaan','penjamin'];
-    foreach ($required as $f) {
-        if (!isset($_POST[$f]) || trim((string)$_POST[$f]) === '') {
-            $valid = false;
-            break;
-        }
+  $required = ['jenis_kelamin', 'pendidikan', 'pekerjaan', 'penjamin'];
+  foreach ($required as $f) {
+    if (!isset($_POST[$f]) || trim((string)$_POST[$f]) === '') {
+      $valid = false;
+      break;
+    }
+  }
+
+  // Pelayanan: kalau locked ambil dari URL, kalau tidak locked dari POST
+  if ($service_locked) {
+    $pelayanan_id = (int)$service_from_url_id;
+  } else {
+    $pelayanan_id = isset($_POST['pelayanan']) ? (int)$_POST['pelayanan'] : 0;
+    if (!$pelayanan_id) $valid = false;
+  }
+
+  $penjamin_id = isset($_POST['penjamin']) ? (int)$_POST['penjamin'] : 0;
+  if (!$penjamin_id) $valid = false;
+
+  $is_bpjs = ($bpjs_id !== null && $penjamin_id === (int)$bpjs_id);
+
+  // ========= VALIDASI PERTANYAAN =========
+  $pertanyaanIds = array_map(fn($r) => (int)$r['id'], $pertanyaan_rows);
+
+  foreach ($pertanyaanIds as $pid) {
+    $field = 'nilai' . $pid;
+
+    if ($pid === $Q4_ID && $is_bpjs) {
+      continue; // q4 tidak wajib jika BPJS
     }
 
-    // Pelayanan: kalau locked ambil dari URL, kalau tidak locked dari POST
-    if ($service_locked) {
-        $pelayanan_id = (int)$service_from_url_id;
-    } else {
-        $pelayanan_id = isset($_POST['pelayanan']) ? (int)$_POST['pelayanan'] : 0;
-        if (!$pelayanan_id) $valid = false;
+    if (!isset($_POST[$field]) || (string)$_POST[$field] === '') {
+      $valid = false;
+      break;
     }
+  }
 
-    $penjamin_id = isset($_POST['penjamin']) ? (int)$_POST['penjamin'] : 0;
-    if (!$penjamin_id) $valid = false;
+  if (!$valid) {
+    $error = "Mohon lengkapi semua isian yang wajib diisi.";
+  } else {
 
-    $is_bpjs = ($bpjs_id !== null && $penjamin_id === (int)$bpjs_id);
+    try {
+      $pdo->beginTransaction();
 
-    // ========= VALIDASI PERTANYAAN =========
-    $pertanyaanIds = array_map(fn($r) => (int)$r['id'], $pertanyaan_rows);
-
-    foreach ($pertanyaanIds as $pid) {
-        $field = 'nilai' . $pid;
-
-        if ($pid === $Q4_ID && $is_bpjs) {
-            continue; // q4 tidak wajib jika BPJS
-        }
-
-        if (!isset($_POST[$field]) || (string)$_POST[$field] === '') {
-            $valid = false;
-            break;
-        }
-    }
-
-    if (!$valid) {
-        $error = "Mohon lengkapi semua isian yang wajib diisi.";
-    } else {
-
-        try {
-            $pdo->beginTransaction();
-
-            // ========= INSERT PROFIL =========
-            $sqlProfil = "
+      // ========= INSERT PROFIL =========
+      $sqlProfil = "
               INSERT INTO profil (
                 jenis_kelamin_id, pendidikan_id, pekerjaan_id, pelayanan_id, penjamin_id
               ) VALUES (:jk, :pd, :pk, :pl, :pn)
               RETURNING id
             ";
 
-            $stmtProfil = $pdo->prepare($sqlProfil);
-            $stmtProfil->execute([
-                ':jk' => (int)$_POST['jenis_kelamin'],
-                ':pd' => (int)$_POST['pendidikan'],
-                ':pk' => (int)$_POST['pekerjaan'],
-                ':pl' => (int)$pelayanan_id,
-                ':pn' => (int)$penjamin_id,
-            ]);
+      $stmtProfil = $pdo->prepare($sqlProfil);
+      $stmtProfil->execute([
+        ':jk' => (int)$_POST['jenis_kelamin'],
+        ':pd' => (int)$_POST['pendidikan'],
+        ':pk' => (int)$_POST['pekerjaan'],
+        ':pl' => (int)$pelayanan_id,
+        ':pn' => (int)$penjamin_id,
+      ]);
 
-            $profil_id = (int)$stmtProfil->fetchColumn();
-            if (!$profil_id) {
-                throw new RuntimeException("Gagal mendapatkan ID profil");
-            }
+      $profil_id = (int)$stmtProfil->fetchColumn();
+      if (!$profil_id) {
+        throw new RuntimeException("Gagal mendapatkan ID profil");
+      }
 
-            // ========= INSERT KUISIONER =========
-            $stmtIns = $pdo->prepare("
+      // ======== INSERT SURVEI =========
+      $sqlSurvei = "
+              INSERT INTO survei (
+                profil_id
+              ) VALUES (:pid)
+              RETURNING id
+            ";
+      $stmtSurvei = $pdo->prepare($sqlSurvei);
+      $stmtSurvei->execute([
+        ':pid' => (int)$profil_id
+      ]);
+      $survei_id = (int)$stmtSurvei->fetchColumn();
+      if (!$survei_id) {
+        throw new RuntimeException("Gagal mendapatkan ID survei");
+      }
+
+
+      // ========= INSERT KUISIONER =========
+      $stmtIns = $pdo->prepare("
               INSERT INTO kuisioner (
-                pertanyaan_id, nilai, profil_id, survey_date, survey_time
-              ) VALUES (:pid, :nilai, :profil, :sdate, :stime)
+                pertanyaan_id, nilai, survei_id, survey_date, survey_time
+              ) VALUES (:pid, :nilai, :survei_id, :sdate, :stime)
             ");
 
-            foreach ($pertanyaanIds as $pid) {
-                $field = 'nilai' . $pid;
+      foreach ($pertanyaanIds as $pid) {
+        $field = 'nilai' . $pid;
 
-                // q4: jika BPJS -> 0
-                $nilai = ($pid === $Q4_ID && $is_bpjs) ? 0 : (int)$_POST[$field];
+        // q4: jika BPJS -> 0
+        $nilai = ($pid === $Q4_ID && $is_bpjs) ? 0 : (int)$_POST[$field];
 
-                $stmtIns->execute([
-                    ':pid'   => (int)$pid,
-                    ':nilai' => (int)$nilai,
-                    ':profil'=> (int)$profil_id,
-                    ':sdate' => $surveyDateFinal,
-                    ':stime' => $surveyTimeFinal,
-                ]);
-            }
+        $stmtIns->execute([
+          ':pid'   => (int)$pid,
+          ':nilai' => (int)$nilai,
+          ':survei_id' => (int)$survei_id,
+          ':sdate' => $surveyDateFinal,
+          ':stime' => $surveyTimeFinal,
+        ]);
+      }
 
-            $pdo->commit();
+      $pdo->commit();
 
-            header("Location: thank-you.php");
-            exit;
-
-        } catch (Throwable $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
-            error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
-            $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
-        }
+      header("Location: thank-you.php");
+      exit;
+    } catch (Throwable $e) {
+      if ($pdo->inTransaction()) $pdo->rollBack();
+      error_log($e->getMessage(), 3, __DIR__ . "/logs/error.log");
+      $error = "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.";
     }
+  }
 }
 ?>
 
@@ -245,8 +270,7 @@ include 'layout/header.php';
             box-shadow:0 2px 8px rgba(0,0,0,.06);
             cursor:not-allowed;
             outline:none;
-          "
-        >
+          ">
         <input type="hidden" name="surveyDate" value="<?= htmlspecialchars($serverDate_open) ?>">
       </div>
 
@@ -268,8 +292,7 @@ include 'layout/header.php';
             box-shadow:0 2px 8px rgba(0,0,0,.06);
             cursor:not-allowed;
             outline:none;
-          "
-        >
+          ">
         <input type="hidden" name="surveyTime" value="<?= htmlspecialchars($serverClock_open) ?>">
       </div>
     </div>
@@ -283,8 +306,8 @@ include 'layout/header.php';
           <div class="radio-group">
             <?php foreach ($jenisKelamin_rows as $row): ?>
               <?php
-                $genderLabel = ((string)$row['nama'] === 'L') ? 'Laki-laki' : 'Perempuan';
-                $id = strtolower(str_replace(' ', '_', $genderLabel));
+              $genderLabel = ((string)$row['nama'] === 'L') ? 'Laki-laki' : 'Perempuan';
+              $id = strtolower(str_replace(' ', '_', $genderLabel));
               ?>
               <div class="radio-option">
                 <input type="radio" id="<?= $id ?>" name="jenis_kelamin" value="<?= (int)$row['id'] ?>" required>
@@ -300,7 +323,8 @@ include 'layout/header.php';
           <label>Pendidikan * <span style="color:#e74c3c;">(Pilih salah satu)</span></label>
           <div class="radio-group">
             <?php foreach ($pendidikan_rows as $row): ?>
-              <?php $edu = (string)$row['nama']; $id = strtolower(str_replace(' ', '_', $edu)); ?>
+              <?php $edu = (string)$row['nama'];
+              $id = strtolower(str_replace(' ', '_', $edu)); ?>
               <div class="radio-option">
                 <input type="radio" id="<?= $id ?>" name="pendidikan" value="<?= (int)$row['id'] ?>" required>
                 <label for="<?= $id ?>"><?= htmlspecialchars($edu) ?></label>
@@ -315,7 +339,8 @@ include 'layout/header.php';
           <label>Pekerjaan * <span style="color:#e74c3c;">(Pilih salah satu)</span></label>
           <div class="radio-group">
             <?php foreach ($pekerjaan_rows as $row): ?>
-              <?php $job = (string)$row['nama']; $id = strtolower(str_replace(' ', '_', $job)); ?>
+              <?php $job = (string)$row['nama'];
+              $id = strtolower(str_replace(' ', '_', $job)); ?>
               <div class="radio-option">
                 <input type="radio" id="<?= $id ?>" name="pekerjaan" value="<?= (int)$row['id'] ?>" required>
                 <label for="<?= $id ?>"><?= htmlspecialchars($job) ?></label>
@@ -340,15 +365,15 @@ include 'layout/header.php';
           <div class="radio-group">
             <?php foreach ($pelayanan_rows as $row): ?>
               <?php
-                $serviceName = (string)$row['nama'];
-                $serviceId   = (int)$row['id'];
-                $slug = preg_replace('/[^a-z0-9]+/', '_', strtolower(trim($serviceName)));
-                $slug = trim((string)$slug, '_');
+              $serviceName = (string)$row['nama'];
+              $serviceId   = (int)$row['id'];
+              $slug = preg_replace('/[^a-z0-9]+/', '_', strtolower(trim($serviceName)));
+              $slug = trim((string)$slug, '_');
 
-                $inputId  = 'svc_' . $serviceId;
-                $checked  = ($service_locked && $serviceId === (int)$service_from_url_id) ? 'checked' : '';
-                $disabled = $service_locked ? 'disabled' : '';
-                $required = $service_locked ? '' : 'required';
+              $inputId  = 'svc_' . $serviceId;
+              $checked  = ($service_locked && $serviceId === (int)$service_from_url_id) ? 'checked' : '';
+              $disabled = $service_locked ? 'disabled' : '';
+              $required = $service_locked ? '' : 'required';
               ?>
               <div class="radio-option">
                 <input
@@ -359,8 +384,7 @@ include 'layout/header.php';
                   data-slug="<?= htmlspecialchars($slug) ?>"
                   <?= $checked ?>
                   <?= $disabled ?>
-                  <?= $required ?>
-                >
+                  <?= $required ?>>
                 <label for="<?= $inputId ?>"><?= htmlspecialchars($serviceName) ?></label>
               </div>
             <?php endforeach; ?>
@@ -374,9 +398,9 @@ include 'layout/header.php';
           <div class="radio-group">
             <?php foreach ($penjamin_rows as $row): ?>
               <?php
-                $pjm = (string)$row['nama'];
-                $pid = (int)$row['id'];
-                $inputId = 'penjamin_' . $pid;
+              $pjm = (string)$row['nama'];
+              $pid = (int)$row['id'];
+              $inputId = 'penjamin_' . $pid;
               ?>
               <div class="radio-option">
                 <input type="radio" id="<?= $inputId ?>" name="penjamin" value="<?= $pid ?>" required>
@@ -401,7 +425,7 @@ include 'layout/header.php';
         $nilai_name = 'nilai' . $pid;
         $wrapId = ($pid === $Q4_ID) ? 'question-q4' : '';
       ?>
-        <div class="question-card" <?= $wrapId ? 'id="'.$wrapId.'"' : '' ?>>
+        <div class="question-card" <?= $wrapId ? 'id="' . $wrapId . '"' : '' ?>>
           <div class="question-text"><?= $qnum . '. ' . $desc ?></div>
           <div class="question-options">
             <?php for ($i = 1; $i <= 4; $i++): ?>
@@ -412,7 +436,8 @@ include 'layout/header.php';
             <?php endfor; ?>
           </div>
         </div>
-      <?php $qnum++; } ?>
+      <?php $qnum++;
+      } ?>
     </div>
 
     <div class="complaint-note">Masukan Anda sangat berarti bagi kami untuk meningkatkan kualitas layanan</div>
@@ -448,14 +473,19 @@ include 'layout/header.php';
   function disableQ4() {
     if (!q4Section) return;
     q4Section.style.opacity = '0.5';
-    q4Radios.forEach(r => { r.checked = false; r.disabled = true; });
+    q4Radios.forEach(r => {
+      r.checked = false;
+      r.disabled = true;
+    });
     setQ4Required(false);
   }
 
   function enableQ4() {
     if (!q4Section) return;
     q4Section.style.opacity = '1';
-    q4Radios.forEach(r => { r.disabled = false; });
+    q4Radios.forEach(r => {
+      r.disabled = false;
+    });
     setQ4Required(true);
   }
 
@@ -464,7 +494,8 @@ include 'layout/header.php';
     const selected = document.querySelector('input[name="penjamin"]:checked');
     if (!selected) return;
     const isBpjs = parseInt(selected.value, 10) === parseInt(BPJS_ID, 10);
-    if (isBpjs) disableQ4(); else enableQ4();
+    if (isBpjs) disableQ4();
+    else enableQ4();
   }
 
   document.querySelectorAll('input[name="penjamin"]').forEach(r => {
