@@ -77,5 +77,3 @@ Catatan: periksa semua file config.php atau db.php di repository untuk memastika
 - 93fbd1a 2026-02-09  Refactor code structure for improved readability and maintainability (achmadchamdan2412-ai)
 
 ---
-
-Jika Anda mau, saya bisa langsung commit perubahan README ini ke branch main. Mau saya commit sekarang?
