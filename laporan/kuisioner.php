@@ -210,8 +210,8 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
             <input type="text" id="dateRange" class="form-control" readonly>
           </div>
         </div>
-        <div class="row mb-3">
-          <div class="col-md-3">
+        <div class="row mb-4">
+          <div class="col-md-2">
             <label>Layanan</label>
             <select id="filter-layanan" class="form-control">
               <option value="">Semua</option>
@@ -221,7 +221,7 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
             </select>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label>Penjamin</label>
             <select id="filter-penjamin" class="form-control">
               <option value="">Semua</option>
@@ -230,13 +230,32 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
               <?php endforeach; ?>
             </select>
           </div>
-
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label>Jenis Kelamin</label>
             <select id="filter-jk" class="form-control">
               <option value="">Semua</option>
               <?php foreach ($jk as $j): ?>
                 <option value="<?= htmlspecialchars($j) ?>"><?= htmlspecialchars($j) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label>Pendidikan</label>
+            <select id="filter-pendidikan" class="form-control">
+              <option value="">Semua</option>
+              <?php foreach ($pendidikan as $p): ?>
+                <option value="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($p) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label>Pekerjaan</label>
+            <select id="filter-pekerjaan" class="form-control">
+              <option value="">Semua</option>
+              <?php foreach ($pekerjaan as $p): ?>
+                <option value="<?= htmlspecialchars($p) ?>"><?= htmlspecialchars($p) ?></option>
               <?php endforeach; ?>
             </select>
           </div>
@@ -476,7 +495,8 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
           targets: [1, 7],
           className: 'text-center'
         }
-      ]
+      ],
+      dom: 'ltip'
     });
 
     // ================= FILTER TANGGAL =================
@@ -521,6 +541,12 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
 
     $('#filter-jk').on('change', function() {
       table.column(4).search(this.value).draw();
+    });
+    $('#filter-pendidikan').on('change', function() {
+      table.column(5).search(this.value).draw();
+    });
+    $('#filter-pekerjaan').on('change', function() {
+      table.column(6).search(this.value).draw();
     });
 
     // ================= NOMOR OTOMATIS =================
