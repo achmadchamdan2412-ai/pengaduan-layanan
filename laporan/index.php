@@ -56,7 +56,7 @@ $totalKeluhan = $qKeluhan->fetch(PDO::FETCH_ASSOC)['total'];
     <div class="row mt-5">
 
         <!-- Area Chart -->
-        <div class="col-xl-8 col-lg-7">
+        <div class="col-xl-8 col-lg-7 justify-content-center mx-auto mb-5">
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div
