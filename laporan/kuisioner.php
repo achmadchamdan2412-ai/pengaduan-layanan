@@ -273,6 +273,7 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
                 <th>Pendidikan</th>
                 <th>Pekerjaan</th>
                 <th>Rata-rata Nilai</th>
+                <th>Detail</th>
               </tr>
             </thead>
 
@@ -301,6 +302,12 @@ $pekerjaan = $pdo->query("SELECT nama FROM pekerjaan ORDER BY nama")->fetchAll(P
                   <td><?= htmlspecialchars($row['pendidikan']) ?></td>
                   <td><?= htmlspecialchars($row['pekerjaan']) ?></td>
                   <td><?= number_format($row['rata_rata_nilai'], 2) ?></td>
+                  <td>
+                    <a href="kuisioner_detail.php?id=<?= $row['survei_id'] ?>"
+                      class="btn btn-sm btn-info">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
                 </tr>
               <?php endforeach; ?>
             </tbody>
