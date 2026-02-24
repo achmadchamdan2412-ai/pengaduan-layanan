@@ -308,7 +308,6 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
             }
         }
-
     };
 </script>
 
