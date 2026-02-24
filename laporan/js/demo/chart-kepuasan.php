@@ -52,10 +52,18 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 backgroundColor: '#4e73df',
                 borderColor: '#4e73df',
                 borderWidth: 1,
-                maxBarThickness: 40
+                maxBarThickness: 30,
+                categoryPercentage: 0.6,
+                barPercentage: 0.7
             }]
         },
         options: {
+            layout: {
+                padding: {
+                    top: 20,
+                    bottom: 20
+                }
+            },
             responsive: true,
             maintainAspectRatio: false,
             scales: {

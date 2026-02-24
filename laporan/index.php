@@ -104,7 +104,7 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
                 <div class="card-header">
                     Average Kepuasan Pasien
                 </div>
-                <div class="card-body">
+                <div style="height: 450px;" class="card-body">
                     <canvas id="chartRataLayanan"></canvas>
                 </div>
             </div>
