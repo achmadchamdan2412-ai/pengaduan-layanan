@@ -111,57 +111,7 @@ $tidak      = $dataKategori[1] ?? 0;
 
 $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
     ->fetchAll(PDO::FETCH_ASSOC);
-
-/* ===============================
-   REKAP KEPUASAN (PAKAI FILTER)
-================================= */
-
-$sqlRekap = "
-SELECT 
-    k.nilai,
-    COUNT(*) as total
-FROM kuisioner k
-JOIN survei s ON s.id = k.survei_id
-JOIN profil pr ON pr.id = s.profil_id
-JOIN pelayanan pl ON pl.id = pr.pelayanan_id
-$whereSQL
-GROUP BY k.nilai
-ORDER BY k.nilai DESC
-";
-
-/* ===============================
-   TOTAL RESPONDEN SESUAI FILTER
-================================= */
-
-$sqlTotalFilter = "
-SELECT COUNT(DISTINCT s.id)
-FROM survei s
-JOIN profil pr ON pr.id = s.profil_id
-JOIN pelayanan pl ON pl.id = pr.pelayanan_id
-$whereSQL
-";
-
-$stmtTotal = $pdo->prepare($sqlTotalFilter);
-$stmtTotal->execute($params);
-$totalRespondenFilter = $stmtTotal->fetchColumn();
-
-$stmtRekap = $pdo->prepare($sqlRekap);
-$stmtRekap->execute($params);
-$rekap = $stmtRekap->fetchAll(PDO::FETCH_KEY_PAIR);
-
-$sangatPuas = $rekap[4] ?? 0;
-$puas       = $rekap[3] ?? 0;
-$kurang     = $rekap[2] ?? 0;
-$tidak      = ($rekap[1] ?? 0);
-
-$totalNilai = $sangatPuas + $puas + $kurang + $tidak;
-
-function persen($nilai, $total)
-{
-    return $total > 0 ? round(($nilai / $total) * 100, 1) : 0;
-}
 ?>
-
 
 <?php include 'layout/header.php'; ?>
 
@@ -210,7 +160,7 @@ function persen($nilai, $total)
                 <div class="card-body">
 
                     <!-- FILTER -->
-                    <form method="GET" action="#hasilSurvey" class="row mb-4">
+                    <form method="GET" class="row mb-4" id="formFilter">
 
                         <div class="col-md-4">
                             <label>Layanan</label>
@@ -281,83 +231,6 @@ function persen($nilai, $total)
                     <div class="progress mb-3">
                         <div class="progress-bar bg-danger"
                             style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
-                    </div>
-
-                    <hr class="mt-5">
-
-                    <h4 class="mb-1">Survei Kepuasan Pelayanan Pasien</h4>
-
-                    <div class="alert alert-secondary py-2">
-                        Jumlah Responden:
-                        <b><?= $totalRespondenFilter ?></b>
-                    </div>
-
-                    <div class="row text-center">
-
-                        <div class="col-md-3">
-                            <div class="card shadow-sm p-3">
-                                <div style="font-size:40px;">😊</div>
-                                <h5 class="mt-2 text-success"><?= $sangatPuas ?></h5>
-                                <small>SANGAT PUAS</small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="card shadow-sm p-3">
-                                <div style="font-size:40px;">🙂</div>
-                                <h5 class="mt-2 text-info"><?= $puas ?></h5>
-                                <small>PUAS</small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="card shadow-sm p-3">
-                                <div style="font-size:40px;">😐</div>
-                                <h5 class="mt-2 text-warning"><?= $kurang ?></h5>
-                                <small>KURANG PUAS</small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <div class="card shadow-sm p-3">
-                                <div style="font-size:40px;">😠</div>
-                                <h5 class="mt-2 text-danger"><?= $tidak ?></h5>
-                                <small>TIDAK PUAS</small>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-4">
-
-                        <label>Sangat Puas (<?= persen($sangatPuas, $totalNilai) ?>%)</label>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-success"
-                                style="width: <?= persen($sangatPuas, $totalNilai) ?>%">
-                            </div>
-                        </div>
-
-                        <label>Puas (<?= persen($puas, $totalNilai) ?>%)</label>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-info"
-                                style="width: <?= persen($puas, $totalNilai) ?>%">
-                            </div>
-                        </div>
-
-                        <label>Kurang Puas (<?= persen($kurang, $totalNilai) ?>%)</label>
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-warning"
-                                style="width: <?= persen($kurang, $totalNilai) ?>%">
-                            </div>
-                        </div>
-
-                        <label>Tidak Puas (<?= persen($tidak, $totalNilai) ?>%)</label>
-                        <div class="progress">
-                            <div class="progress-bar bg-danger"
-                                style="width: <?= persen($tidak, $totalNilai) ?>%">
-                            </div>
-                        </div>
-
                     </div>
 
                 </div>
