@@ -276,15 +276,16 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
         });
     });
 
-
-
     new Chart(document.getElementById('chartPerSoal'), {
         type: 'bar',
         data: {
             labels: <?= json_encode($labels) ?>,
             datasets: [{
                 label: 'Rata-rata Kepuasan',
-                data: <?= json_encode($values) ?>
+                data: <?= json_encode($values) ?>,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgb(54, 162, 235)',
+                borderWidth: 1
             }]
         },
         options: {
