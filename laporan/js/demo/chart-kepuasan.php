@@ -47,44 +47,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         data: {
             labels: <?= json_encode($labels) ?>,
             datasets: [{
-                label: 'Rata-rata Nilai',
+                label: 'Rata-rata Kepuasan',
                 data: <?= json_encode($data) ?>,
-                backgroundColor: '#4e73df',
-                borderColor: '#4e73df',
-                borderWidth: 1,
-                maxBarThickness: 30,
-                categoryPercentage: 0.6,
-                barPercentage: 0.7
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgb(54, 162, 235)',
+                borderWidth: 1
             }]
         },
         options: {
-            layout: {
-                padding: {
-                    top: 20,
-                    bottom: 20
-                }
-            },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 4,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return "Rata-rata: " + context.parsed.y;
-                        }
-                    }
+                    max: 4
                 }
             }
         }
