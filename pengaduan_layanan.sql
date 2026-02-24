@@ -664,7 +664,20 @@ VALUES
     (6, 25, '2026-02-09 11:50:42.580918'),
     (7, 26, '2026-02-09 11:56:20.6548'),
     (8, 27, '2026-02-09 12:34:20.549767');
+    
+DROP TABLE IF EXISTS "user";
+CREATE TABLE 
+IF NOT EXISTS "user" (
+    "id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(100) NOT NULL UNIQUE,
+    "password" VARCHAR(255) NOT NULL
+);
 
+INSERT INTO "user" (username, password)
+VALUES (
+    'admin',
+    '$2y$12$LX4AWMgv.t6CLBpvAJdzbO5o3Aq5emeVKTWHesU26bFdC1x/U6.b6'
+);
 /*!40000 ALTER TABLE "survei" ENABLE KEYS */;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

@@ -6,7 +6,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <div class="sidebar-brand-text mx-3">Admin</div>
+        <img src="../images/logo.png" alt="" style="width: 40px; height: 40px;">
+        <div class="sidebar-brand-text mx-3">Laporan</div>
     </a>
 
     <hr class="sidebar-divider my-0">

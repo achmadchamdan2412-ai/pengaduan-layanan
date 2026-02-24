@@ -501,4 +501,15 @@ textarea:focus {
   .thank-you-title {
     font-size: 26px;
   }
+
+  .detail-button {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #00b3b3;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
 }
