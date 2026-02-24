@@ -9,6 +9,7 @@ require_once __DIR__ . '/../config/db.php';
 $totalResponden = $pdo->query("SELECT COUNT(*) FROM survei")->fetchColumn();
 $totalKeluhan   = $pdo->query("SELECT COUNT(*) FROM keluhan")->fetchColumn();
 
+
 /* ===============================
    FILTER
 ================================= */
@@ -35,28 +36,17 @@ if ($date_range != '') {
 $whereSQL = $where ? "WHERE " . implode(" AND ", $where) : "";
 
 /* ===============================
-   AVG GLOBAL (TANPA FILTER)
-================================= */
-$avgGlobal = $pdo->query("
-    SELECT ROUND(AVG(nilai)::numeric,2) 
-    FROM kuisioner
-")->fetchColumn();
-
-/* ===============================
-   DATA PER SOAL (PAKAI FILTER)
+   DATA PER SOAL
 ================================= */
 $sqlSoal = "
-SELECT 
-    q.id,
-    q.deskripsi,
-    ROUND(AVG(k.nilai)::numeric,2) as rata
+SELECT q.id, ROUND(AVG(k.nilai)::numeric,2) as rata
 FROM kuisioner k
 JOIN survei s ON s.id = k.survei_id
 JOIN profil pr ON pr.id = s.profil_id
 JOIN pelayanan pl ON pl.id = pr.pelayanan_id
 JOIN pertanyaan q ON q.id = k.pertanyaan_id
 $whereSQL
-GROUP BY q.id, q.deskripsi
+GROUP BY q.id
 ORDER BY q.id
 ";
 
@@ -66,11 +56,58 @@ $dataSoal = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $labels = [];
 $values = [];
+$no = 1;
 
 foreach ($dataSoal as $d) {
-    $labels[] = $d['deskripsi'];
+    $labels[] = "No. " . $no;
     $values[] = $d['rata'];
+    $no++;
 }
+
+/* ===============================
+   KATEGORI KEPUASAN
+================================= */
+$sqlKategori = "
+SELECT k.nilai, COUNT(*) as total
+FROM kuisioner k
+JOIN survei s ON s.id = k.survei_id
+JOIN profil pr ON pr.id = s.profil_id
+JOIN pelayanan pl ON pl.id = pr.pelayanan_id
+$whereSQL
+GROUP BY k.nilai
+";
+
+$sqlTotalFilter = "
+SELECT COUNT(DISTINCT s.id)
+FROM survei s
+JOIN profil pr ON pr.id = s.profil_id
+JOIN pelayanan pl ON pl.id = pr.pelayanan_id
+$whereSQL
+";
+
+$stmtTotal = $pdo->prepare($sqlTotalFilter);
+$stmtTotal->execute($params);
+$totalRespondenFilter = $stmtTotal->fetchColumn();
+
+$stmtTotalFilter = $pdo->prepare($sqlTotalFilter);
+$stmtTotalFilter->execute($params);
+$totalRespondenFilter = $stmtTotalFilter->fetchColumn();
+
+$stmt2 = $pdo->prepare($sqlKategori);
+$stmt2->execute($params);
+$dataKategori = $stmt2->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$totalSemua = array_sum($dataKategori);
+
+function persen($jumlah, $total)
+{
+    return $total > 0 ? round(($jumlah / $total) * 100, 2) : 0;
+}
+
+$sangatPuas = $dataKategori[4] ?? 0;
+$puas       = $dataKategori[3] ?? 0;
+$kurang     = $dataKategori[2] ?? 0;
+$tidak      = $dataKategori[1] ?? 0;
 
 $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
     ->fetchAll(PDO::FETCH_ASSOC);
@@ -83,50 +120,47 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
     <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
 
     <div class="row">
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <b>Total Responden</b>
-                <h4><?= $totalResponden ?></h4>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow p-3">
-                <b>Total Keluhan</b>
-                <h4><?= $totalKeluhan ?></h4>
+        <div class="col-md-6 mx-auto">
+            <div class="row text-center">
+                <div class="col-md-6">
+                    <div class="card shadow p-3">
+                        <b>Total Responden</b>
+                        <h4><?= $totalResponden ?></h4>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow p-3">
+                        <b>Total Keluhan</b>
+                        <h4><?= $totalKeluhan ?></h4>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- CHART LAMA -->
+    <!-- CHART 1 -->
     <div class="row mt-4">
-        <div class="col-md-8 mx-auto">
+        <div class="col-md-10 mx-auto">
             <div class="card shadow">
-                <div class="card-header">
-                    Average Kepuasan Pasien
-                </div>
-                <div style="height: 450px;" class="card-body">
+                <div class="card-header">Average Kepuasan Pasien</div>
+                <div style="height:450px" class="card-body">
                     <canvas id="chartRataLayanan"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CONTAINER BARU -->
+    <!-- CHART 2 -->
     <div class="row mt-5">
         <div class="col-md-10 mx-auto">
-            <div class="card shadow">
-
+            <div class="card shadow" id="hasilSurvey">
                 <div class="card-header">
                     Detail Kepuasan Per Pertanyaan
                 </div>
-
                 <div class="card-body">
 
-                    <div class="alert alert-primary text-center">
-                        AVG Kepuasan Global : <b><?= $avgGlobal ?></b>
-                    </div>
-
-                    <form method="GET" class="row mb-4">
+                    <!-- FILTER -->
+                    <form method="GET" action="#hasilSurvey" class="row mb-4">
 
                         <div class="col-md-4">
                             <label>Layanan</label>
@@ -142,7 +176,7 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
                         </div>
 
                         <div class="col-md-4">
-                            <label>Date Range</label>
+                            <label>Periode</label>
                             <input type="text"
                                 id="date_range"
                                 name="date_range"
@@ -158,7 +192,46 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
                     </form>
 
-                    <canvas id="chartPerSoal"></canvas>
+                    <!-- CHART -->
+                    <div style="height:450px">
+                        <canvas id="chartPerSoal"></canvas>
+                    </div>
+
+                    <hr>
+
+                    <!-- KESIMPULAN -->
+
+
+                    <h5><b>Hasil Survey Kepuasan</b></h5>
+
+                    <div class="alert alert-secondary py-2">
+                        Jumlah Responden:
+                        <b><?= $totalRespondenFilter ?></b>
+                    </div>
+
+                    <p>Sangat Puas (<?= $sangatPuas ?>) - <?= persen($sangatPuas, $totalSemua) ?>%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success"
+                            style="width:<?= persen($sangatPuas, $totalSemua) ?>%"></div>
+                    </div>
+
+                    <p>Puas (<?= $puas ?>) - <?= persen($puas, $totalSemua) ?>%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-info"
+                            style="width:<?= persen($puas, $totalSemua) ?>%"></div>
+                    </div>
+
+                    <p>Kurang Puas (<?= $kurang ?>) - <?= persen($kurang, $totalSemua) ?>%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-warning"
+                            style="width:<?= persen($kurang, $totalSemua) ?>%"></div>
+                    </div>
+
+                    <p>Tidak Puas (<?= $tidak ?>) - <?= persen($tidak, $totalSemua) ?>%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-danger"
+                            style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
+                    </div>
 
                 </div>
             </div>
@@ -167,10 +240,8 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
 </div>
 
-<!-- ================= JS ================= -->
-
+<!-- DATE RANGE PICKER -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -178,7 +249,6 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
 <script>
     $(document).ready(function() {
-
         $('#date_range').daterangepicker({
             autoUpdateInput: false,
             locale: {
@@ -193,7 +263,6 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
                 picker.endDate.format('YYYY-MM-DD')
             );
         });
-
     });
 
     new Chart(document.getElementById('chartPerSoal'), {
@@ -207,14 +276,40 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 5
+                    max: 4
                 }
             }
         }
     });
+</script>
+
+<script>
+    window.onload = function() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.toString() !== "") {
+
+            const target = document.getElementById("hasilSurvey");
+
+            if (target) {
+
+                setTimeout(function() {
+                    window.scrollTo({
+                        top: target.getBoundingClientRect().top + window.pageYOffset - 80,
+                        behavior: "smooth"
+                    });
+                }, 500);
+
+            }
+        }
+
+    };
 </script>
 
 <?php include 'layout/footer.php'; ?>
