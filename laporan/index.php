@@ -2,91 +2,219 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 
-// $qResponden = pg_query($conn, "SELECT COUNT(*) AS total FROM survei");
-$qResponden = $pdo->query("SELECT COUNT(*) AS total FROM survei");
-$totalResponden = $qResponden->fetch(PDO::FETCH_ASSOC)['total'];
+/* ===============================
+   CARD DATA
+================================= */
+$totalResponden = $pdo->query("SELECT COUNT(*) FROM survei")->fetchColumn();
+$totalKeluhan   = $pdo->query("SELECT COUNT(*) FROM keluhan")->fetchColumn();
 
-// $qKeluhan = pg_query($conn, "SELECT COUNT(*) AS total FROM keluhan_saran");
-$qKeluhan = $pdo->query("SELECT COUNT(*) AS total FROM keluhan");
-$totalKeluhan = $qKeluhan->fetch(PDO::FETCH_ASSOC)['total'];
+/* ===============================
+   FILTER
+================================= */
+$pelayanan_id = $_GET['pelayanan_id'] ?? '';
+$date_range   = $_GET['date_range'] ?? '';
 
-// include 'layout/nav.php';
+$where = [];
+$params = [];
+
+if ($pelayanan_id != '') {
+    $where[] = "pl.id = :pelayanan_id";
+    $params[':pelayanan_id'] = $pelayanan_id;
+}
+
+if ($date_range != '') {
+    $dates = explode(" - ", $date_range);
+    if (count($dates) == 2) {
+        $where[] = "DATE(s.created_at) BETWEEN :start AND :end";
+        $params[':start'] = $dates[0];
+        $params[':end']   = $dates[1];
+    }
+}
+
+$whereSQL = $where ? "WHERE " . implode(" AND ", $where) : "";
+
+/* ===============================
+   AVG GLOBAL (TANPA FILTER)
+================================= */
+$avgGlobal = $pdo->query("
+    SELECT ROUND(AVG(nilai)::numeric,2) 
+    FROM kuisioner
+")->fetchColumn();
+
+/* ===============================
+   DATA PER SOAL (PAKAI FILTER)
+================================= */
+$sqlSoal = "
+SELECT 
+    q.id,
+    q.deskripsi,
+    ROUND(AVG(k.nilai)::numeric,2) as rata
+FROM kuisioner k
+JOIN survei s ON s.id = k.survei_id
+JOIN profil pr ON pr.id = s.profil_id
+JOIN pelayanan pl ON pl.id = pr.pelayanan_id
+JOIN pertanyaan q ON q.id = k.pertanyaan_id
+$whereSQL
+GROUP BY q.id, q.deskripsi
+ORDER BY q.id
+";
+
+$stmt = $pdo->prepare($sqlSoal);
+$stmt->execute($params);
+$dataSoal = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$labels = [];
+$values = [];
+
+foreach ($dataSoal as $d) {
+    $labels[] = $d['deskripsi'];
+    $values[] = $d['rata'];
+}
+
+$listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
+    ->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <?php include 'layout/header.php'; ?>
 
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+
+    <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <b>Total Responden</b>
+                <h4><?= $totalResponden ?></h4>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow p-3">
+                <b>Total Keluhan</b>
+                <h4><?= $totalKeluhan ?></h4>
+            </div>
+        </div>
     </div>
 
-    <div class="row justify-content-center mt-5">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Responden</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $totalResponden ?></div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-file-earmark-text fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+    <!-- CHART LAMA -->
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header">
+                    Average Kepuasan Pasien
                 </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Keluhan & Saran</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $totalKeluhan ?></div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-chat fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <canvas id="chartRataLayanan"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- CONTAINER BARU -->
     <div class="row mt-5">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow">
 
-        <!-- Area Chart -->
-        <div class="col-xl-8 col-lg-7 justify-content-center mx-auto mb-5">
-            <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div
-                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Average Kepuasan Pasien</h6>
-                    <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                            aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Dropdown Header:</div>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </div>
+                <div class="card-header">
+                    Detail Kepuasan Per Pertanyaan
                 </div>
-                <!-- Card Body -->
+
                 <div class="card-body">
-                    <div class="chart-area">
-                        <canvas id="chartRataLayanan"></canvas>
+
+                    <div class="alert alert-primary text-center">
+                        AVG Kepuasan Global : <b><?= $avgGlobal ?></b>
                     </div>
+
+                    <form method="GET" class="row mb-4">
+
+                        <div class="col-md-4">
+                            <label>Layanan</label>
+                            <select name="pelayanan_id" class="form-control">
+                                <option value="">Semua</option>
+                                <?php foreach ($listPelayanan as $pl): ?>
+                                    <option value="<?= $pl['id'] ?>"
+                                        <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
+                                        <?= $pl['nama'] ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Date Range</label>
+                            <input type="text"
+                                id="date_range"
+                                name="date_range"
+                                value="<?= htmlspecialchars($date_range) ?>"
+                                class="form-control">
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100">
+                                Filter
+                            </button>
+                        </div>
+
+                    </form>
+
+                    <canvas id="chartPerSoal"></canvas>
+
                 </div>
             </div>
         </div>
     </div>
+
 </div>
+
+<!-- ================= JS ================= -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+        $('#date_range').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        });
+
+        $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(
+                picker.startDate.format('YYYY-MM-DD') +
+                ' - ' +
+                picker.endDate.format('YYYY-MM-DD')
+            );
+        });
+
+    });
+
+    new Chart(document.getElementById('chartPerSoal'), {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($labels) ?>,
+            datasets: [{
+                label: 'Rata-rata Kepuasan',
+                data: <?= json_encode($values) ?>,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5
+                }
+            }
+        }
+    });
+</script>
 
 <?php include 'layout/footer.php'; ?>
 <?php include './js/demo/chart-kepuasan.php'; ?>
