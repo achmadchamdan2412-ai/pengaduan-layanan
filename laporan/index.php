@@ -163,21 +163,23 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
     <div class="row mb-4">
         <div class="col-md-6 text-center">
             <div class="card shadow p-3">
-                <b>Total Responden</b>
-                <h4><?= $totalResponden ?></h4>
+                <b class="m-0 font-weight-bold text-primary">Total Responden</b>
+                <h4 class="m-0 font-weight-bold text-primary"><?= $totalResponden ?></h4>
             </div>
         </div>
         <div class="col-md-6 text-center">
             <div class="card shadow p-3">
-                <b>Total Keluhan</b>
-                <h4><?= $totalKeluhan ?></h4>
+                <b class="m-0 font-weight-bold text-primary">Total Keluhan</b>
+                <h4 class="m-0 font-weight-bold text-primary"><?= $totalKeluhan ?></h4>
             </div>
         </div>
     </div>
 
     <!-- CHART 1 -->
     <div class="card shadow mb-4">
-        <div class="card-header">Average Kepuasan Pasien</div>
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Average Kepuasan Pasien</h6>
+        </div>
         <div class="card-body" style="height:400px">
             <canvas id="chartRataLayanan"></canvas>
         </div>
@@ -185,7 +187,9 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
     <!-- CHART 2 -->
     <div class="card shadow" id="hasilSurvey">
-        <div class="card-header">Detail Kepuasan Per Pertanyaan</div>
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Detail Kepuasan Per Pertanyaan</h6>
+        </div>
         <div class="card-body">
 
             <!-- FILTER -->
@@ -220,7 +224,7 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
             <hr>
 
-            <h5><b>Hasil Survey Kepuasan</b></h5>
+            <h5><b class="m-0 font-weight-bold text-primary">Hasil Survey Kepuasan</b></h5>
 
             <div class="alert alert-secondary py-2">
                 Jumlah Responden: <b><?= $totalRespondenFilter ?></b>
