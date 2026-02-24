@@ -190,76 +190,61 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
             <!-- FILTER -->
             <form method="GET" class="row mb-4" id="formFilter">
-
                 <div class="col-md-4">
                     <label>Layanan</label>
                     <select name="pelayanan_id" class="form-control">
                         <option value="">Semua</option>
                         <?php foreach ($listPelayanan as $pl): ?>
-                            <option value="<?= $pl['id'] ?>"
-                                <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
+                            <option value="<?= $pl['id'] ?>" <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
                                 <?= $pl['nama'] ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <!-- FILTER -->
-                <form method="GET" class="row mb-4" id="formFilter">
-                    <div class="col-md-4">
-                        <label>Layanan</label>
-                        <select name="pelayanan_id" class="form-control">
-                            <option value="">Semua</option>
-                            <?php foreach ($listPelayanan as $pl): ?>
-                                <option value="<?= $pl['id'] ?>" <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
-                                    <?= $pl['nama'] ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
 
-                    <div class="col-md-4">
-                        <label>Periode</label>
-                        <input type="text" id="date_range" name="date_range"
-                            value="<?= htmlspecialchars($date_range) ?>"
-                            class="form-control">
-                    </div>
-
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button class="btn btn-primary w-100">Filter</button>
-                    </div>
-                </form>
-
-                <div style="height:400px">
-                    <canvas id="chartPerSoal"></canvas>
+                <div class="col-md-4">
+                    <label>Periode</label>
+                    <input type="text" id="date_range" name="date_range"
+                        value="<?= htmlspecialchars($date_range) ?>"
+                        class="form-control">
                 </div>
 
-                <hr>
-
-                <h5><b>Hasil Survey Kepuasan</b></h5>
-
-                <div class="alert alert-secondary py-2">
-                    Jumlah Responden: <b><?= $totalRespondenFilter ?></b>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">Filter</button>
                 </div>
+            </form>
 
-                <p>Sangat Puas (<?= $sangatPuas ?>) - <?= persen($sangatPuas, $totalSemua) ?>%</p>
-                <div class="progress mb-3">
-                    <div class="progress-bar bg-success" style="width:<?= persen($sangatPuas, $totalSemua) ?>%"></div>
-                </div>
+            <div style="height:400px">
+                <canvas id="chartPerSoal"></canvas>
+            </div>
 
-                <p>Puas (<?= $puas ?>) - <?= persen($puas, $totalSemua) ?>%</p>
-                <div class="progress mb-3">
-                    <div class="progress-bar bg-info" style="width:<?= persen($puas, $totalSemua) ?>%"></div>
-                </div>
+            <hr>
 
-                <p>Kurang Puas (<?= $kurang ?>) - <?= persen($kurang, $totalSemua) ?>%</p>
-                <div class="progress mb-3">
-                    <div class="progress-bar bg-warning" style="width:<?= persen($kurang, $totalSemua) ?>%"></div>
-                </div>
+            <h5><b>Hasil Survey Kepuasan</b></h5>
 
-                <p>Tidak Puas (<?= $tidak ?>) - <?= persen($tidak, $totalSemua) ?>%</p>
-                <div class="progress mb-3">
-                    <div class="progress-bar bg-danger" style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
-                </div>
+            <div class="alert alert-secondary py-2">
+                Jumlah Responden: <b><?= $totalRespondenFilter ?></b>
+            </div>
+
+            <p>Sangat Puas (<?= $sangatPuas ?>) - <?= persen($sangatPuas, $totalSemua) ?>%</p>
+            <div class="progress mb-3">
+                <div class="progress-bar bg-success" style="width:<?= persen($sangatPuas, $totalSemua) ?>%"></div>
+            </div>
+
+            <p>Puas (<?= $puas ?>) - <?= persen($puas, $totalSemua) ?>%</p>
+            <div class="progress mb-3">
+                <div class="progress-bar bg-info" style="width:<?= persen($puas, $totalSemua) ?>%"></div>
+            </div>
+
+            <p>Kurang Puas (<?= $kurang ?>) - <?= persen($kurang, $totalSemua) ?>%</p>
+            <div class="progress mb-3">
+                <div class="progress-bar bg-warning" style="width:<?= persen($kurang, $totalSemua) ?>%"></div>
+            </div>
+
+            <p>Tidak Puas (<?= $tidak ?>) - <?= persen($tidak, $totalSemua) ?>%</p>
+            <div class="progress mb-3">
+                <div class="progress-bar bg-danger" style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
+            </div>
 
         </div>
     </div>
@@ -292,49 +277,23 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
     });
 
 
+
     new Chart(document.getElementById('chartPerSoal'), {
         type: 'bar',
         data: {
             labels: <?= json_encode($labels) ?>,
             datasets: [{
-                label: 'Rata-rata Nilai',
-                data: <?= json_encode($values) ?>,
-                backgroundColor: '#4e73df',
-                borderColor: '#4e73df',
-                borderWidth: 1,
-                maxBarThickness: 30,
-                categoryPercentage: 0.6,
-                barPercentage: 0.7
+                label: 'Rata-rata Kepuasan',
+                data: <?= json_encode($values) ?>
             }]
         },
         options: {
-            layout: {
-                padding: {
-                    top: 20,
-                    bottom: 20
-                }
-            },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 4,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return "Rata-rata: " + context.parsed.y;
-                        }
-                    }
+                    max: 4
                 }
             }
         }
