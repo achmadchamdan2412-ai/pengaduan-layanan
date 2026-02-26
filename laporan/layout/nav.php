@@ -1,6 +1,13 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
+                    <div class="d-flex align-items-center">
+                        <img src="../images/logo.png" alt="Logo" style="height:40px; margin-right:12px;">
+                        <span class="font-weight-bold text-primary" style="font-size:18px;">
+                            Laporan Sistem Masukan Rumah Sakit Eka Husada
+                        </span>
+                    </div>
+
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>

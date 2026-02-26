@@ -5,10 +5,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <img src="../images/logo.png" alt="" style="width: 40px; height: 40px;">
-        <div class="sidebar-brand-text mx-3">Laporan</div>
-    </a>
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php"></a>
 
     <hr class="sidebar-divider my-0">
 

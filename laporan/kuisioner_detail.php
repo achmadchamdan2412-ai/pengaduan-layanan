@@ -9,11 +9,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $survei_id = (int) $_GET['id'];
 
-/*
-|--------------------------------------------------------------------------
-| Ambil Data Header Survei
-|--------------------------------------------------------------------------
-*/
+
 $sqlHeader = "
 SELECT
     s.id,
@@ -45,9 +41,7 @@ if (!$header) {
     die("Data tidak ditemukan");
 }
 
-/*
-| Ambil Detail Nilai Per Pertanyaan
-*/
+
 $sqlDetail = "
 SELECT
     pr.deskripsi AS pertanyaan,
@@ -62,11 +56,7 @@ $stmtDetail = $pdo->prepare($sqlDetail);
 $stmtDetail->execute(['id' => $survei_id]);
 $details = $stmtDetail->fetchAll(PDO::FETCH_ASSOC);
 
-/*
-|--------------------------------------------------------------------------
-| Hitung Rata-rata
-|--------------------------------------------------------------------------
-*/
+
 $sqlAvg = "
 SELECT ROUND(AVG(nilai)::numeric,2) AS rata_rata
 FROM kuisioner
@@ -91,7 +81,7 @@ $rata = $stmtAvg->fetch(PDO::FETCH_ASSOC);
         </a>
     </div>
 
-    <!-- ===================== INFO SURVEI ===================== -->
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
@@ -147,7 +137,7 @@ $rata = $stmtAvg->fetch(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- ===================== DETAIL NILAI ===================== -->
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">

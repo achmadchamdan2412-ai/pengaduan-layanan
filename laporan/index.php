@@ -3,52 +3,40 @@ require_once 'auth.php';
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 
-/* ===============================
-   CARD DATA
-================================= */
+
 $totalResponden = $pdo->query("SELECT COUNT(*) FROM survei")->fetchColumn();
 $totalKeluhan   = $pdo->query("SELECT COUNT(*) FROM keluhan")->fetchColumn();
 
-/* ===============================
-   FILTER
-================================= */
+
 $pelayanan_id = $_GET['pelayanan_id'] ?? '';
 $date_range   = $_GET['date_range'] ?? '';
 
-$where = [];
-$params = [];
-
-if ($pelayanan_id != '') {
-    $where[] = "pl.id = :pelayanan_id";
-    $params[':pelayanan_id'] = $pelayanan_id;
-}
+$startDate = '';
+$endDate   = '';
 
 if ($date_range != '') {
     $dates = explode(" - ", $date_range);
     if (count($dates) == 2) {
-        $where[] = "DATE(s.created_at) BETWEEN :start AND :end";
-        $params[':start'] = $dates[0];
-        $params[':end']   = $dates[1];
+        $startDate = trim($dates[0]);
+        $endDate   = trim($dates[1]);
     }
 }
 
-$whereSQL = $where ? "WHERE " . implode(" AND ", $where) : "";
+$namaLayanan = '';
+if ($pelayanan_id != '') {
+    $stmtPel = $pdo->prepare("SELECT nama FROM pelayanan WHERE id = :id LIMIT 1");
+    $stmtPel->execute([':id' => $pelayanan_id]);
+    $namaLayanan = $stmtPel->fetchColumn() ?: '';
+}
 
-/* ===============================
-   CHART 1 (Average per layanan - GLOBAL)
-   Tidak ikut filter pelayanan
-================================= */
+
 $whereChart1 = [];
 $paramsChart1 = [];
 
-// HANYA filter tanggal
-if ($date_range != '') {
-    $dates = explode(" - ", $date_range);
-    if (count($dates) == 2) {
-        $whereChart1[] = "DATE(s.created_at) BETWEEN :start AND :end";
-        $paramsChart1[':start'] = $dates[0];
-        $paramsChart1[':end']   = $dates[1];
-    }
+if ($startDate != '' && $endDate != '') {
+    $whereChart1[] = "DATE(s.created_at) BETWEEN :start AND :end";
+    $paramsChart1[':start'] = $startDate;
+    $paramsChart1[':end']   = $endDate;
 }
 
 $whereSQLChart1 = $whereChart1 ? "WHERE " . implode(" AND ", $whereChart1) : "";
@@ -76,9 +64,24 @@ foreach ($dataChart1 as $row) {
     $valuesChart1[] = (float)$row['rata'];
 }
 
-/* ===============================
-   CHART 2 (Per soal)
-================================= */
+
+$where = [];
+$params = [];
+
+if ($pelayanan_id != '') {
+    $where[] = "pl.id = :pelayanan_id";
+    $params[':pelayanan_id'] = $pelayanan_id;
+}
+
+if ($startDate != '' && $endDate != '') {
+    $where[] = "DATE(s.created_at) BETWEEN :start AND :end";
+    $params[':start'] = $startDate;
+    $params[':end']   = $endDate;
+}
+
+$whereSQL = $where ? "WHERE " . implode(" AND ", $where) : "";
+
+
 $sqlSoal = "
 SELECT q.id, ROUND(AVG(k.nilai)::numeric,2) as rata
 FROM kuisioner k
@@ -105,9 +108,7 @@ foreach ($dataSoal as $d) {
     $no++;
 }
 
-/* ===============================
-   KATEGORI KEPUASAN
-================================= */
+
 $sqlKategori = "
 SELECT k.nilai, COUNT(*) as total
 FROM kuisioner k
@@ -134,9 +135,7 @@ $puas       = $dataKategori[3] ?? 0;
 $kurang     = $dataKategori[2] ?? 0;
 $tidak      = $dataKategori[1] ?? 0;
 
-/* ===============================
-   TOTAL RESPONDEN FILTER
-================================= */
+
 $sqlTotalFilter = "
 SELECT COUNT(DISTINCT s.id)
 FROM survei s
@@ -159,103 +158,122 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
 
     <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
 
-    <!-- CARD -->
+
     <div class="row mb-4">
-        <div class="col-md-6 text-center">
-            <div class="card shadow p-3">
-                <b class="m-0 font-weight-bold text-primary">Total Responden</b>
-                <h4 class="m-0 font-weight-bold text-primary"><?= $totalResponden ?></h4>
+
+        <div class="col-md-6">
+            <div class="card shadow border-left-primary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Responden
+                            </div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                <?= $totalResponden ?>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 text-center">
-            <div class="card shadow p-3">
-                <b class="m-0 font-weight-bold text-primary">Total Keluhan</b>
-                <h4 class="m-0 font-weight-bold text-primary"><?= $totalKeluhan ?></h4>
+
+        <div class="col-md-6">
+            <div class="card shadow border-left-warning">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Total Keluhan
+                            </div>
+                            <div class="h3 mb-0 font-weight-bold text-gray-800">
+                                <?= $totalKeluhan ?>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-warning text-white shadow">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
+
+
+    <form method="GET" class="row mb-4" id="formFilter">
+        <div class="col-md-4">
+            <label>Layanan</label>
+            <select name="pelayanan_id" class="form-control">
+                <option value="">Semua</option>
+                <?php foreach ($listPelayanan as $pl): ?>
+                    <option value="<?= $pl['id'] ?>" <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
+                        <?= $pl['nama'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label>Periode</label>
+            <input type="text" id="date_range" name="date_range"
+                value="<?= htmlspecialchars($date_range) ?>" class="form-control">
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
 
     <!-- CHART 1 -->
     <div class="card shadow mb-4">
         <div class="card-header">
-            <h6 class="m-0 font-weight-bold text-primary">Average Kepuasan Pasien</h6>
+            <h6 class="m-0 font-weight-bold text-primary">
+                Average Kepuasan Pasien Semua Layanan
+                <?php if ($startDate && $endDate): ?>
+                    <br>
+                    <small class="text-muted">
+                        Periode <?= date('d M Y', strtotime($startDate)) ?>
+                        - <?= date('d M Y', strtotime($endDate)) ?>
+                    </small>
+                <?php endif; ?>
+            </h6>
         </div>
         <div class="card-body" style="height:400px">
             <canvas id="chartRataLayanan"></canvas>
         </div>
     </div>
 
-    <!-- CHART 2 -->
+
     <div class="card shadow" id="hasilSurvey">
         <div class="card-header">
-            <h6 class="m-0 font-weight-bold text-primary">Detail Kepuasan Per Pertanyaan</h6>
+            <h6 class="m-0 font-weight-bold text-primary">
+                Detail Kepuasan Per Pertanyaan<?= $namaLayanan ? " untuk Layanan " . ucwords(strtolower(htmlspecialchars($namaLayanan))) : "" ?>
+            </h6>
         </div>
         <div class="card-body">
 
-            <!-- FILTER -->
-            <form method="GET" class="row mb-4" id="formFilter">
-                <div class="col-md-4">
-                    <label>Layanan</label>
-                    <select name="pelayanan_id" class="form-control">
-                        <option value="">Semua</option>
-                        <?php foreach ($listPelayanan as $pl): ?>
-                            <option value="<?= $pl['id'] ?>" <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
-                                <?= $pl['nama'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                            <option value="<?= $pl['id'] ?>" <?= $pelayanan_id == $pl['id'] ? 'selected' : '' ?>>
-                                <?= $pl['nama'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label>Periode</label>
-                    <input type="text" id="date_range" name="date_range"
-                        value="<?= htmlspecialchars($date_range) ?>"
-                        class="form-control">
-                </div>
-                <div class="col-md-4">
-                    <label>Periode</label>
-                    <input type="text" id="date_range" name="date_range"
-                        value="<?= htmlspecialchars($date_range) ?>"
-                        class="form-control">
-                </div>
-
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary w-100">Filter</button>
-                </div>
-            </form>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary w-100">Filter</button>
-                </div>
-            </form>
-
-            <div style="height:400px">
-                <canvas id="chartPerSoal"></canvas>
-            </div>
             <div style="height:400px">
                 <canvas id="chartPerSoal"></canvas>
             </div>
 
-                <hr>
+            <hr>
 
-            <h5><b class="m-0 font-weight-bold text-primary">Hasil Survey Kepuasan</b></h5>
+            <h6>
+                <b class="m-0 font-weight-bold text-primary">
+                    Hasil Survey Kepuasan<?= $namaLayanan ? " untuk Layanan " . ucwords(strtolower(htmlspecialchars($namaLayanan))) : "" ?>
+                </b>
+            </h6>
 
             <div class="alert alert-secondary py-2">
                 Jumlah Responden: <b><?= $totalRespondenFilter ?></b>
             </div>
-            <div class="alert alert-secondary py-2">
-                Jumlah Responden: <b><?= $totalRespondenFilter ?></b>
-            </div>
 
-            <p>Sangat Puas (<?= $sangatPuas ?>) - <?= persen($sangatPuas, $totalSemua) ?>%</p>
-            <div class="progress mb-3">
-                <div class="progress-bar bg-success" style="width:<?= persen($sangatPuas, $totalSemua) ?>%"></div>
-            </div>
             <p>Sangat Puas (<?= $sangatPuas ?>) - <?= persen($sangatPuas, $totalSemua) ?>%</p>
             <div class="progress mb-3">
                 <div class="progress-bar bg-success" style="width:<?= persen($sangatPuas, $totalSemua) ?>%"></div>
@@ -265,15 +283,7 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
             <div class="progress mb-3">
                 <div class="progress-bar bg-info" style="width:<?= persen($puas, $totalSemua) ?>%"></div>
             </div>
-            <p>Puas (<?= $puas ?>) - <?= persen($puas, $totalSemua) ?>%</p>
-            <div class="progress mb-3">
-                <div class="progress-bar bg-info" style="width:<?= persen($puas, $totalSemua) ?>%"></div>
-            </div>
 
-            <p>Kurang Puas (<?= $kurang ?>) - <?= persen($kurang, $totalSemua) ?>%</p>
-            <div class="progress mb-3">
-                <div class="progress-bar bg-warning" style="width:<?= persen($kurang, $totalSemua) ?>%"></div>
-            </div>
             <p>Kurang Puas (<?= $kurang ?>) - <?= persen($kurang, $totalSemua) ?>%</p>
             <div class="progress mb-3">
                 <div class="progress-bar bg-warning" style="width:<?= persen($kurang, $totalSemua) ?>%"></div>
@@ -283,17 +293,19 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
             <div class="progress mb-3">
                 <div class="progress-bar bg-danger" style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
             </div>
-            <p>Tidak Puas (<?= $tidak ?>) - <?= persen($tidak, $totalSemua) ?>%</p>
-            <div class="progress mb-3">
-                <div class="progress-bar bg-danger" style="width:<?= persen($tidak, $totalSemua) ?>%"></div>
+            <div class="text-right mt-4">
+                <a href="cetak_laporan.php?pelayanan_id=<?= $pelayanan_id ?>&date_range=<?= urlencode($date_range) ?>"
+                    target="_blank"
+                    class="btn btn-success">
+                    Cetak Laporan PDF
+                </a>
             </div>
-
         </div>
     </div>
 
 </div>
 
-<!-- LIBRARY -->
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
@@ -318,6 +330,32 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
         });
     });
 
+
+    new Chart(document.getElementById('chartRataLayanan'), {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($labelsChart1) ?>,
+            datasets: [{
+                label: 'Rata-rata Kepuasan',
+                data: <?= json_encode($valuesChart1) ?>,
+                backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                borderColor: 'rgb(255, 159, 64)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 4
+                }
+            }
+        }
+    });
+
+
     new Chart(document.getElementById('chartPerSoal'), {
         type: 'bar',
         data: {
@@ -341,28 +379,6 @@ $listPelayanan = $pdo->query("SELECT id,nama FROM pelayanan ORDER BY nama")
             }
         }
     });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("formFilter");
-
-        if (form) {
-            form.addEventListener("submit", function() {
-                sessionStorage.setItem("afterFilter", "true");
-            });
-        }
-
-        if (sessionStorage.getItem("afterFilter") === "true") {
-            const target = document.getElementById("hasilSurvey");
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 80,
-                    behavior: "smooth"
-                });
-            }
-            sessionStorage.removeItem("afterFilter");
-        }
-    });
 </script>
 
 <?php include 'layout/footer.php'; ?>
-<?php include './js/demo/chart-kepuasan.php'; ?>

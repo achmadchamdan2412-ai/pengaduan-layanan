@@ -1,112 +1,318 @@
-</div>
 <footer class="footer">
   <div class="footer-content">
-    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-      <h2>TERIMA KASIH</h2>
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
+
+
+    <div class="thanks-section">
+      <h2>Terima Kasih</h2>
+      <p>Atas partisipasi Anda</p>
     </div>
-    <p>Atas partisipasi Anda dalam mengisi kuesioner ini</p>
 
     <div class="footer-contact">
-      <h3>Saluran Keluhan & Saran</h3>
       <div class="contact-cards">
-        <a href="https://ekahusada.com/" target="_blank" class="contact-link">
-          <div class="contact-card">
-            <h3 style="font-size:16px; font-weight:bold; margin-bottom:5px; display:flex; align-items:center; justify-content:center; gap:8px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22 6 12 13 2 6" />
-            </svg>
-              Website
-            </h3>
-            <p>Kunjungi website kami</p>
+        <a href="https://ekahusada.com/" target="_blank" class="contact-card">
+          <div class="card-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="card-info">
+            <h4>Website</h4>
           </div>
         </a>
 
-        <a href="https://www.google.com/maps/place/Rumah+Sakit+Eka+Husada/@-7.2919276,112.5758554,19z/data=!4m6!3m5!1s0x2e78076f2c137053:0x53fac856c71488b6!8m2!3d-7.2917819!4d112.5759469!16s%2Fg%2F11f650syy_?entry=ttu&g_ep=EgoyMDI2MDIwMS4wIKXMDSoKLDEwMDc5MjA3M0gBUAM%3D" target="_blank" class="contact-link">
-          <div class="contact-card">
-            <h3 style="font-size:16px; font-weight:bold; margin-bottom:5px; display:flex; align-items:center; justify-content:center; gap:8px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 0px; flex-shrink: 0;">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              Lokasi
-            </h3>
-            <p>Kami berlokasi disini</p>
+        <a href="https://www.google.com/maps/place/Rumah+Sakit+Eka+Husada" target="_blank" class="contact-card">
+          <div class="card-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="card-info">
+            <h4>Lokasi</h4>
           </div>
         </a>
 
-        <a href="https://api.whatsapp.com/send/?phone=082244125457&text&type=phone_number&app_absent=0" target="_blank" class="contact-link">
-        <div class="contact-card">
-          <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-            </svg>
-            WA Pengaduan
-          </h3>
-          <p>082244125457</p>
-        </div>
+        <a href="https://api.whatsapp.com/send/?phone=082244125457" target="_blank" class="contact-card">
+          <div class="card-icon whatsapp">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+          <div class="card-info">
+            <h4>WA Pengaduan</h4>
+          </div>
         </a>
       </div>
     </div>
-    
-    <div style="margin-top: 20px; font-size: 14px; color: rgba(255,255,255,0.8);">
-      <p>Rumah Sakit Eka Husada - Melayani Dengan Sepenuh Hati</p>
+
+
+    <div class="footer-bottom">
+      <p>RS Eka Husada - Melayani Dengan Sepenuh Hati</p>
     </div>
+
   </div>
 </footer>
 
-<script>
-  const bpjsRadio = document.getElementById('bpjs');
-  const umumRadio = document.getElementById('umum');
-  const q4Section = document.getElementById('question-q4');
-  const q4Radios = document.querySelectorAll('input[name="q4"]');
-  const q4Bpjs = document.getElementById('q4-bpjs');
-  const SERVICE_LOCKED = <?php echo $service_locked ? 'true' : 'false'; ?>;
-
-  if (!SERVICE_LOCKED) {
-    document.querySelectorAll('input[name="service"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        const val = radio.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('service', val);
-        // arahkan ke URL baru
-        window.location.href = url.toString();
-      });
-    });
+<style>
+  .footer {
+    background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+    color: white;
+    padding: 25px 20px 20px;
+    margin-top: 40px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    overflow: hidden;
   }
 
-  function disableQ4() {
-    if (!q4Section) return;
-    q4Section.style.opacity = '0.5';
-    q4Radios.forEach(r => {
-      r.checked = false;
-      r.disabled = true;
-    });
-    q4Bpjs.value = '0';
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
+    pointer-events: none;
   }
 
-  function enableQ4() {
-    if (!q4Section) return;
-    q4Section.style.opacity = '1';
-    q4Radios.forEach(r => {
-      r.disabled = false;
-    });
-    q4Bpjs.value = '';
+  .footer-content {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
   }
 
-  bpjsRadio?.addEventListener('change', disableQ4);
-  umumRadio?.addEventListener('change', enableQ4);
 
-  // optional: kalau user reload dalam kondisi BPJS sudah kepilih, langsung disable q4
-  if (bpjsRadio && bpjsRadio.checked) disableQ4();
-</script>
+  .thanks-section {
+    text-align: center;
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+  }
 
-</body>
+  .thanks-icon {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 10px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    animation: pulse 2s infinite;
+  }
 
-</html>
+  @keyframes pulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+  }
+
+  .thanks-section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: white;
+    letter-spacing: -0.3px;
+  }
+
+  .thanks-section p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .contact-card:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .contact-card:active {
+    transform: scale(0.98);
+  }
+
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .card-icon.whatsapp {
+    background: #25D366;
+    color: white;
+  }
+
+  .card-info h4 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+    white-space: nowrap;
+  }
+
+
+  .footer-bottom {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .footer-bottom p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding: 20px 15px 15px;
+      margin-top: 30px;
+    }
+
+    .thanks-section {
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .thanks-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 8px;
+    }
+
+    .thanks-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .thanks-section h2 {
+      font-size: 16px;
+    }
+
+    .thanks-section p {
+      font-size: 12px;
+    }
+
+    .contact-cards {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .contact-card {
+      padding: 10px 12px;
+      justify-content: flex-start;
+    }
+
+    .card-icon {
+      width: 28px;
+      height: 28px;
+      font-size: 13px;
+    }
+
+    .card-info h4 {
+      font-size: 13px;
+    }
+
+    .footer-bottom {
+      padding-top: 12px;
+    }
+
+    .footer-bottom p {
+      font-size: 11px;
+    }
+  }
+
+
+  @media (max-width: 380px) {
+    .footer {
+      padding: 18px 12px 12px;
+    }
+
+    .thanks-section h2 {
+      font-size: 15px;
+    }
+
+    .thanks-section p {
+      font-size: 11px;
+    }
+
+    .contact-card {
+      padding: 9px 10px;
+    }
+
+    .card-icon {
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+    }
+
+    .card-info h4 {
+      font-size: 12px;
+    }
+
+    .footer-bottom p {
+      font-size: 10px;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .contact-cards {
+      gap: 12px;
+    }
+  }
+
+
+  @media print {
+    .footer {
+      background: #fff !important;
+      color: #000 !important;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .thanks-icon,
+    .card-icon {
+      display: none;
+    }
+
+    .contact-card {
+      background: #f1f5f9 !important;
+      color: #000 !important;
+      border: 1px solid #ccc;
+    }
+  }
+</style>

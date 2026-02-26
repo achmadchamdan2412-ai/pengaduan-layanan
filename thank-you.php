@@ -106,4 +106,3 @@ $tipe_form = $_SESSION['tipe_form'];
 </body>
 
 </html>
-

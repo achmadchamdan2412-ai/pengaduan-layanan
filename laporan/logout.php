@@ -17,13 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $params["httponly"]
         );
     }
-
     session_destroy();
-
     header("Location: login.php");
     exit;
 }
-
-// Jika akses langsung via GET, redirect saja
 header("Location: index.php");
 exit;
