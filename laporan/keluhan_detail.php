@@ -1,28 +1,28 @@
-l<?php
-    require_once 'auth.php';
-    require_once __DIR__ . '/../config/config.php';
-    require_once __DIR__ . '/../config/db.php';
+<?php
+require_once 'auth.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/db.php';
 
-    $id = $_GET['id'] ?? null;
+$id = $_GET['id'] ?? null;
 
-    if (!$id) {
-        header("Location: keluhan_saran.php");
-        exit;
-    }
+if (!$id) {
+    header("Location: keluhan_saran.php");
+    exit;
+}
 
-    $stmt = $pdo->prepare("SELECT * FROM keluhan WHERE id = :id");
-    $stmt->execute([':id' => $id]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("SELECT * FROM keluhan WHERE id = :id");
+$stmt->execute([':id' => $id]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$row) {
-        header("Location: keluhan_saran.php");
-        exit;
-    }
+if (!$row) {
+    header("Location: keluhan_saran.php");
+    exit;
+}
 
-    $sql = "SELECT id FROM keluhan ORDER BY tanggal DESC, pukul DESC";
-    $allRows = $pdo->query($sql)->fetchAll(PDO::FETCH_COLUMN);
-    $rowNumber = array_search($id, $allRows) + 1;
-    ?>
+$sql = "SELECT id FROM keluhan ORDER BY tanggal DESC, pukul DESC";
+$allRows = $pdo->query($sql)->fetchAll(PDO::FETCH_COLUMN);
+$rowNumber = array_search($id, $allRows) + 1;
+?>
 
 <?php include 'layout/header.php'; ?>
 
